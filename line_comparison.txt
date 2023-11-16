@@ -1,0 +1,25 @@
+#Comment	proto.py lines : Equivalent file 	/ 	main.py lines
+#IO Start	1-42	:	io_rap.py 		(1-10)	/	1-54
+#Param Eqs	43-92	:	parameters.py	(1-66)	/	55-58
+#Scipy Ex	93-151	:	scipy_funcs.py	(1-)	/	import
+#An_Bn Eq	152-222	:	An_Bn.py		(1-)	/	import
+#Spacial Ar	223-241	:	parameters.py	(67-)	/	55-58
+#St RR Eq	242-280	:	stress.py 		(1-47)	/	59-61
+#St RR Gr	281-312	:	graph.py		(1-34)	/	68-70
+#St PP Eq	313-360	:	stress.py		(48-97)	/	62-63
+#St PP Gr	361-390	:	graph.py		(1-34)	/	71-72
+#St TT Eq	391-436	:	stress.py		(98-145)/	64-65
+#St TT Gr	437-466	:	graph.py		(1-34)	/	73-74
+#St RT Eq	467-505	:	stress.py		(146-)	/	66-67
+#ST RT Gr	506-535	:	graph.py		(1-34)	/	75-76
+#Delta Eqs 	536-575	:	temperature.py	(1-16)	/	import
+#Xi Eqs		576-602	:	temperature.py	(17-28)	/	import
+#q1 Eq 		603-610	:	temperature.py	(29-33)	/	78-79
+#Vol He Gr	611-642	:	graph.py		(1-34)	/	80-81
+#Tmp Gra In	643-672	:	---						/	82-98
+#Par Eq TGr	673-795	:	temperature.py 	(34-)	/	import
+#Temp Grad	796-810	:	---						/	99-110
+#Tmp Gra Gr	811-846	:	graph.py		(35-)	/	111-114
+#IO Close	847-	:	io_rap.py		(11-)	/	115-124E
+
+870 Lines -> 124 Lines in main document
