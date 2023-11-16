@@ -1,11 +1,11 @@
 import numpy as __np
 
 #!Global Variables
-P1, a, f, N, v1, X1, v2, p, p2, k, gamma, h, r, tha, tha1, P, B1, a1, u1 = [0]*19
+P1, a, f, N, v1, X1, v2, p, p2, k1, gamma, h, r, tha, tha1, P, B1, a1, u1 = [0]*19
 
 def init(lis):
-    global P1, a, f, N, v1, X1, v2, p, p2, k, gamma, h
-    P1, a, f, N, v1, X1, v2, p, p2, k, gamma, h = lis
+    global P1, a, f, N, v1, X1, v2, p, p2, k1, gamma, h
+    P1, a, f, N, v1, X1, v2, p, p2, k1, gamma, h = lis
     __set_variables()
 
 #----------------------------------------------------------------------------------------
