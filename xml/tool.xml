@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<run>
+    <tool>
+        <title>Viscoelastic Heating via Oscillatory Excitation</title>
+        <command>python @tool/proto.py @driver</command>
+    </tool>
+    <input>
+        <group id="Warning">
+            <about>
+                <label>Warning!</label>
+            </about>
+            <note id="value81">
+                <contents>file://warning.html</contents>
+            </note>
+        </group>
+        <group id="Model">
+            <about>
+                <label>Model</label>
+            </about>
+            <note id="value82">
+                <contents>file://systemModel.html</contents>
+            </note>
+        </group>
+        <group id="InputParameters">
+            <about>
+                <label>Input Parameters</label>
+            </about>
+            <group id="SysConfig">
+                <about>
+                    <label>Configuration Parameters</label>
+                </about>
+                <number id="VariableN">
+                    <about>
+                        <label>N</label>
+                        <description>Number of ponits (N x N)
+
+WARNING: The larger the N value the longer it will take. It scales with N^2</description>
+                    </about>
+                    <default>30</default>
+                </number>
+                <number id="Amplitude">
+                    <about>
+                        <label>Amplitude of Incident Wave [m]</label>
+                    </about>
+                    <default>0.000001</default>
+                    <min>0</min>
+                    <max>1</max>
+                </number>
+                <number id="Omega">
+                    <about>
+                        <label>Frequency of Incident Wave [Hz]</label>
+                    </about>
+                    <default>500000</default>
+                </number>
+                <number id="CrystalRadius">
+                    <about>
+                        <label>Crystal Radius a [m]</label>
+                    </about>
+                    <default>0.00025</default>
+                    <min>0</min>
+                    <max>1</max>
+                </number>
+            </group>
+            <group id="MechProp">
+                <about>
+                    <label>Mechanical Properties</label>
+                </about>
+                <number id="LongWaveSpeed">
+                    <about>
+                        <label>Longitudinal Wave Speed (v1) [m/s]</label>
+                    </about>
+                    <default>1100</default>
+                </number>
+                <number id="LongWaveAttenuation">
+                    <about>
+                        <label>Longitudinal Wave Attenuation (chi1) [dB/MHz/m]</label>
+                    </about>
+                    <default>0.024</default>
+                    <min>0</min>
+                    <max>10</max>
+                </number>
+                <number id="ShearWaveSpeed">
+                    <about>
+                        <label>Shear Wave Speed (v2) [m/s]</label>
+                    </about>
+                    <default>570</default>
+                </number>
+                <number id="ShearWaveAttenuation">
+                    <about>
+                        <label>Shear Wave Attenuation (chi2) [dB/Hz/m]</label>
+                    </about>
+                    <default>0.01243</default>
+                </number>
+                <number id="Density1">
+                    <about>
+                        <label>Density of the Medium (rho1) [kg/m^3]</label>
+                    </about>
+                    <default>1030</default>
+                    <min>100</min>
+                    <max>10000</max>
+                </number>
+                <number id="Density2">
+                    <about>
+                        <label>Density of the Crystal (rho2) [kg/m^3]</label>
+                    </about>
+                    <default>1910</default>
+                    <min>100</min>
+                    <max>10000</max>
+                </number>
+            </group>
+            <group id="HeatProperties">
+                <about>
+                    <label>Thermal Properties</label>
+                </about>
+                <number id="ThermalConductivity">
+                    <about>
+                        <label>Thermal Conductivity (k) [W/(m.k)]</label>
+                    </about>
+                    <default>0.27</default>
+                    <min>0.001</min>
+                    <max>400</max>
+                </number>
+                <number id="ThermalDiffusivity">
+                    <about>
+                        <label>Thermal Diffusivity (gamma) [m^2/s]</label>
+                    </about>
+                    <default>0.000000102</default>
+                </number>
+                <number id="ConvectionCoef">
+                    <about>
+                        <label>Convection Coefficient of the Surrounding Fluid (U_o) [W/(m^2-K)]</label>
+                    </about>
+                    <default>5</default>
+                </number>
+            </group>
+        </group>
+    </input>
+</run>

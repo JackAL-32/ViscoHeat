@@ -1,0 +1,11 @@
+<run>
+    <input>
+        <number id="Ef">
+            <units>eV</units>
+            <min>-10eV</min>
+            <max>10eV</max>
+            <default>0eV</default>
+            <current>3eV</current>
+        </number>
+    </input>
+</run>

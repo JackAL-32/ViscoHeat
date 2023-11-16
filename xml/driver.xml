@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<run>
+    <tool>
+        <title>Viscoelastic Heating via Oscillatory Excitation</title>
+        <command>python @tool/GUI.py @driver</command>
+    </tool>
+    <input>
+        <group id="Config">
+            <about>
+                <label>Config</label>
+            </about>
+            <string id="Title">
+                <about>
+                    <label>SYSTEM CONFIGURATION</label>
+                    <description>Below is</description>
+                </about>
+            </string>
+            <image id="SystemConfiguration">
+                <about>
+                    <label>System Configuration</label>
+                </about>
+                <resize>width=300</resize>
+            </image>
+        </group>
+        <group id="MechProperties">
+            <about>
+                <label>Mechanical Properties</label>
+                <description>All the mechanical parameters are under here.</description>
+            </about>
+            <number id="Density">
+                <about>
+                    <label>Density of the Medium</label>
+                </about>
+                <default>1</default>
+            </number>
+            <number id="Amplitude">
+                <about>
+                    <label>Amplitude of Incident Wave</label>
+                </about>
+                <default>1</default>
+            </number>
+            <number id="ComplexShear">
+                <about>
+                    <label>Complex Shear Wave Number</label>
+                </about>
+                <default>1</default>
+            </number>
+            <number id="ComplexLong">
+                <about>
+                    <label>Complex Long Wave Number</label>
+                </about>
+                <default>1</default>
+            </number>
+            <number id="Radius">
+                <about>
+                    <label>Complex Long Wave Number</label>
+                </about>
+                <default>1</default>
+            </number>
+            <number id="Omega">
+                <about>
+                    <label>Omega</label>
+                </about>
+                <default>1</default>
+            </number>
+        </group>
+    </input>
+    <output>
+        <integer id="phi">
+            <about>
+                <label>phi</label>
+                <description>Test output</description>
+            </about>
+        </integer>
+    </output>
+</run>
