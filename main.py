@@ -14,7 +14,7 @@
 # p2 = get_io("MechProp", "Density2")
 # 
 # # ThermalProp
-# k = get_io("HeatProperties", "ThermalConductivity")
+# k1 = get_io("HeatProperties", "ThermalConductivity")
 # gamma = get_io("HeatProperties", "ThermalDiffusivity")
 # h = get_io("HeatProperties", "ConvectionCoef")
 # #T0 = get_io("HeatProperties", "InitTemp")
@@ -31,12 +31,13 @@ v2 = 570
 p = 1030
 p2 = 1910
 
-k = 0.27
+k1 = 0.27
 gamma = 0.000000102
 h = 5
+T0 = 21
 
 import equations.parameters as param
-param.init([P1, a, f, N, v1, X1, v2, p, p2, k, gamma, h])
+param.init([P1, a, f, N, v1, X1, v2, p, p2, k1, gamma, h, T0])
 
 from equations.parameters import *
 # Library
@@ -112,7 +113,7 @@ T = FillGap(T1,r,tha1,t)
 
 # Graph Temperature Gradient
 
-graph_temp_gr(T[:,:,(t.size-1)], shift = 21)
+graph_temp_gr(T[:,:,(t.size-1)], shift = 21, name = "tempGradient")
 
 # #Output IO
 # put_io("outi", "phiPhi", "Phi Stress on the Phi Face Image")

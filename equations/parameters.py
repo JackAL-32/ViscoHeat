@@ -1,11 +1,11 @@
 import numpy as __np
 
 #!Global Variables
-P1, a, f, N, v1, X1, v2, p, p2, k, gamma, h, r, tha, tha1, P, B1, a1, u1 = [0]*19
+P1, a, f, N, v1, X1, v2, p, p2, k1, gamma, h, r, tha, tha1, P, B1, a1, u1, T0 = [0]*20
 
 def init(lis):
-    global P1, a, f, N, v1, X1, v2, p, p2, k, gamma, h
-    P1, a, f, N, v1, X1, v2, p, p2, k, gamma, h = lis
+    global P1, a, f, N, v1, X1, v2, p, p2, k1, gamma, h, T0
+    P1, a, f, N, v1, X1, v2, p, p2, k1, gamma, h, T0 = lis
     __set_variables()
 
 #----------------------------------------------------------------------------------------
@@ -44,6 +44,7 @@ def __set_variables():
     E1 = (u1*(3*x + 2*u1))/(x + u1)
 
     #
+    global nu1
     nu1 = x/(2*(x + u1))
 
     #alpha_1 = Complex Longitudinal Wave Number

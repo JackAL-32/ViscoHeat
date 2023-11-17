@@ -26,14 +26,14 @@ def graph_eq(sig, name = str(time.time())[7:-4], factor = 10e6, dir = "./picture
     norm = Normalize(vmin=vmin, vmax=vmax)
     sm = cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
-    #colorbar(sm, ticks=arange(vmin,vmax,1),boundaries=arange(vmin,vmax,.001))
+    #__plt.colorbar(sm, ticks=arange(vmin,vmax,1),boundaries=arange(vmin,vmax,.001))
 
     __plt.gca().set_aspect("equal")
     __plt.xlabel("z (mm)")
     __plt.ylabel("x (mm)")
     fig.savefig(dir + name + ".png")
 
-def graph_temp_gr(values, shift = 21, name = str(time.time())[7:-4], dir = "./pictures"):
+def graph_temp_gr(values, shift = 21, name = str(time.time())[7:-4], dir = "./pictures/"):
     ax.contourf(X, Y, values - shift)
     vmax = __np.floor(__np.amax(__np.abs(values)))
     vmin = __np.floor(__np.amin(__np.abs(values)))
@@ -41,7 +41,7 @@ def graph_temp_gr(values, shift = 21, name = str(time.time())[7:-4], dir = "./pi
     norm = Normalize(vmin=vmin, vmax=vmax)
     sm = cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
-    #colorbar(sm, ticks=arange(vmin,vmax,10),boundaries=arange(vmin,vmax,.001))
+    #__plt.colorbar(sm, ticks=arange(vmin,vmax,10),boundaries=arange(vmin,vmax,.001))
     
     __plt.gca().set_aspect("equal")
     fig.savefig(dir + name + ".png")
