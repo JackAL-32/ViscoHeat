@@ -14,19 +14,20 @@ Y = R * __np.sin(theta)
 
 cmap = __plt.get_cmap('jet',10000)
 
-fig, ax = __plt.subplots(subplot_kw=dict())
+fig, ax = __plt.subplots()
 
 def graph_eq(sig, name = str(time.time())[7:-4], factor = 10e6, dir = "./pictures/", colorbar_ticks = "0.5 or 1, 0.2 for T"):
+    fig, ax = __plt.subplots()
     values = __np.abs(sig)
     ax.contourf(X, Y, values)
 
-    vmax = __np.floor(__np.amax(values)/factor)
+    vmax = __np.ceil(__np.amax(values)/factor)
     vmin = __np.floor(__np.amin(values)/factor)
 
     norm = Normalize(vmin=vmin, vmax=vmax)
     sm = cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
-    #__plt.colorbar(sm, ticks=arange(vmin,vmax,1),boundaries=arange(vmin,vmax,.001))
+    fig.colorbar(sm, ticks=__np.arange(vmin,vmax,.25), boundaries=__np.arange(vmin,vmax,.001), ax=ax)
 
     __plt.gca().set_aspect("equal")
     __plt.xlabel("z (mm)")
@@ -41,7 +42,7 @@ def graph_temp_gr(values, shift = 21, name = str(time.time())[7:-4], dir = "./pi
     norm = Normalize(vmin=vmin, vmax=vmax)
     sm = cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
-    #__plt.colorbar(sm, ticks=arange(vmin,vmax,10),boundaries=arange(vmin,vmax,.001))
+    #fig.colorbar(sm, ticks=__np.arange(vmin,vmax,.25), boundaries=__np.arange(vmin,vmax,.001), ax=ax)
     
     __plt.gca().set_aspect("equal")
     fig.savefig(dir + name + ".png")
