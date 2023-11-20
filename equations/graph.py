@@ -33,12 +33,13 @@ def graph_eq(sig, name = str(time.time())[7:-4], factor = 10e5, dir = "./picture
     __plt.ylabel("x (mm)")
     fig.savefig(dir + name + ".png")
 
+# shift is T0?
 def graph_temp_gr(values, shift = 21, name = str(time.time())[7:-4], dir = "./pictures/"):
     fig, ax = __plt.subplots()
     ax.contourf(X, Y, values - shift, 256)
 
-    vmax = __np.ceil(__np.amax(__np.abs(values))) - 21
-    vmin = __np.floor(__np.amin(__np.abs(values))) - 21
+    vmax = __np.ceil(__np.amax(__np.abs(values))) - shift # T0?
+    vmin = __np.floor(__np.amin(__np.abs(values))) - shift # T0?
 
     norm = Normalize(vmin=vmin, vmax=vmax)
     sm = cm.ScalarMappable(cmap=cmap, norm=norm)
