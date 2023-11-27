@@ -31,6 +31,7 @@ def graph_eq(sig, name = str(time.time())[7:-4], factor = 10e5, dir = "./picture
     __plt.gca().set_aspect("equal")
     __plt.xlabel("z (mm)")
     __plt.ylabel("x (mm)")
+    __plt.title(name)
     fig.savefig(dir + name + ".png")
 
 # shift is T0?
@@ -47,5 +48,6 @@ def graph_temp_gr(values, shift = 21, name = str(time.time())[7:-4], dir = "./pi
     fig.colorbar(sm, ticks=__np.arange(0,vmax,.25), boundaries=__np.arange(0,vmax,.001), ax=ax)
     
     __plt.gca().set_aspect("equal")
+    __plt.title(name)
     fig.savefig(dir + name + ".png")
     
