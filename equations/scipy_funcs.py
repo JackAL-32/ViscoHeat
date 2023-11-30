@@ -33,7 +33,7 @@ def dPndtha(m,n,x,tha):
         elif m == 2:
             return -__scisp.lpmv(1,n,x)*(cot(tha))
         else:
-            raise TypeError("Invlaid input. The first term should be a 1 or a 2")
+            raise TypeError("Invalid input. The first term should be a 1 or a 2")
         
     elif n > 1:
         if m == 1:
@@ -41,7 +41,7 @@ def dPndtha(m,n,x,tha):
         elif m == 2:
             return __scisp.lpmv(2,n,x) - __scisp.lpmv(1,n,x)*(cot(tha))
         else:
-            raise TypeError("Invlaid input. The first term should be a 1 or a 2")
+            raise TypeError("Invalid input. The first term should be a 1 or a 2")
 
 #h_n: Spherical Hankel Function of the first kind
 def hn(n,z):

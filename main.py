@@ -60,27 +60,27 @@ from equations.temperature import *
 
 
 # Stress Equations
-sigrr = get_sigrr(); print("sigrr Equation done")
+sigrr = get_sigrr(); print("sigrr equation done...")
 
-sigphiphi = get_sigphiphi(); print("sigpp Equation done")
+sigphiphi = get_sigphiphi(); print("sigpp equation done...")
 
-sigthatha = get_sigthatha(); print("sigtt Equation done")
+sigthatha = get_sigthatha(); print("sigtt equation done...")
 
-sigrtha = get_sigrtha(); print("sigrt Equation done")
+sigrtha = get_sigrtha(); print("sigrt equation done...")
 
 # Stress Graphs
-graph_eq(sigrr, name = "rR")
+graph_eq(sigrr, name = "rR"); print("sigrr graph done...")
 
-graph_eq(sigphiphi, name = "phiPhi")
+graph_eq(sigphiphi, name = "phiPhi"); print("sigpp graph done...")
 
-graph_eq(sigthatha, name = "thetaTheta")
+graph_eq(sigthatha, name = "thetaTheta"); print("sigtt graph done...")
 
-graph_eq(sigrtha, name = "rTheta")
+graph_eq(sigrtha, name = "rTheta"); print("sigrt graph done...")
 
 # Volumetric Heat Generation Graph
-q1 = get_q1(sigrr, sigphiphi, sigthatha, sigrtha)
+q1 = get_q1(sigrr, sigphiphi, sigthatha, sigrtha); print("q1 equation done...")
 
-graph_eq(q1, "q1")
+graph_eq(q1, "q1"); print("q1 graph done...")
 
 # Input for Tempurature Gradient
 
@@ -113,7 +113,7 @@ T = FillGap(T1,r,tha1,t)
 
 # Graph Temperature Gradient
 
-graph_temp_gr(T[:,:,(t.size-1)], shift = 21, name = "tempGradient")
+graph_temp_gr(T[:,:,(t.size-1)], shift = 21, name = "tempGradient"); print("temp graph done...")
 
 # #Output IO
 # put_io("outi", "phiPhi", "Phi Stress on the Phi Face Image")
