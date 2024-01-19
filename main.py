@@ -56,8 +56,7 @@ from equations.scipy_funcs import *
 from equations.stress import *
 from equations.graph import * #Need to fix this
 from equations.temperature import *
-
-
+import time
 
 # Stress Equations
 sigrr = get_sigrr(); print("sigrr equation done...")
@@ -102,9 +101,16 @@ q1 = dt*(gamma/k1)*q1
 # Temperature Gradient
 
 #Iteration Matrices
+start = time.time()
 Hmat = H(r,tha,gamma,dt,dr,dtha)
+end = time.time()
+print(start-end)
 Hbmat = Hb(r,tha,gamma,dt,dr,dtha)
 
+start = time.time()
+H_newMat = H_new(r,tha,gamma,dt,dr,dtha)
+end = time.time()
+print(start-end)
 #Temperature Array
 T1 = Tnew_t(Hmat,T0,Hbmat,q1,r,t,dt).round(2)
 

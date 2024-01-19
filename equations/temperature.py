@@ -105,7 +105,40 @@ def Hb(r,tha,gamma,dt,dr,dtha):
                     mat[k,m,i,j] = value
     return mat
 
+#Matrix that is built from the diffusion equation that evolves the tempurature.
+def H_new(r,tha,gamma,dt,dr,dtha):
+    a = gamma
+    from numpy import cos
+    H = __np.zeros( (r.size,tha.size,r.size,r.size) )
+    ig,jg,kg,mg = __np.mgrid[0:r.size, 0:tha.size, 0:r.size, 0:r.size]
+    #Delta inds then add to equation in 2 lines. a*dt at the end
+    #For boundaries just set to the value 
+        
+    inds = __np.where((ig == kg) & (jg-1 == mg))
+    H[inds] += 1/(r[ig][inds]**2 * dtha**2) - cos(tha[jg][inds])/(2 * r[ig][inds]**2 * __np.sin(tha[jg][inds]) * dtha)
+    inds = __np.where((ig-1 == kg) & (jg == mg))
+    H[inds] += 1/(dr**2) - 1/(r[ig][inds]*dr)
+    inds = __np.where((ig == kg) & (jg == mg))
+    H[inds] -= 2/(dr**2) + 2/(r[ig][inds]**2 * dtha**2) - 1/(a*dt) #-= is not a typo
+    inds = __np.where((ig+1 == kg) & (jg == mg))
+    H[inds] += 1/(dr**2) + 1/(r[ig][inds]*dr)
+    inds = __np.where((ig == kg) & (jg+1 == mg))
+    H[inds] += cos(tha[jg][inds])/(2 * r[ig][inds]**2 * __np.sin(tha[jg][inds]) * dtha) + 1/(r[ig][inds]**2 * dtha**2)
+
+    #Boundary Conditions
+    inds = __np.where((ig == 0) & (kg == 1) & (jg == mg))
+    H[inds] += 1/(dr**2) - 1/(r[ig][inds]*dr)
+    inds = __np.where((jg == 0) & (ig == kg) & (tha.size-1 == mg))
+    H[inds] += 1/(r[ig][inds]**2 * dtha**2) - cos(tha[jg][inds])/(2 * r[ig][inds]**2 * __np.sin(tha[jg][inds]) * dtha)
+    inds = __np.where((jg == tha.size-1) & (mg == 0) & (ig == kg))
+    H[inds] += cos(tha[jg][inds])/(2 * r[ig][inds]**2 * __np.sin(tha[jg][inds]) * dtha) + 1/(r[ig][inds]**2 * dtha**2)
+
+    H *= a*dt
+
+    return H
+
 #Sums the elements in the inputed matrix
+# This is arr.sum()
 def matsum(mat,x):
     add = 0
     for i in range(x.size):
@@ -119,11 +152,14 @@ def Tnew(mat1,mat2,mat3,q,x,dt):
     
     for i in range(x.size):
         for j in range(x.size):
+
+            # Hb stuff
             if i == (x.size-1):
                 A = __np.multiply(mat3[:,:,i,j],mat2)
                 add = matsum(A,x)
                 T[i,j] = add + q[j,i] + B(x,dt)[i]
                 
+            # H stuff
             else:
                 
                 #if 0 == i and 0 <= j and j <= 2:
