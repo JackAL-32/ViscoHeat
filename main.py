@@ -101,16 +101,19 @@ q1 = dt*(gamma/k1)*q1
 # Temperature Gradient
 
 #Iteration Matrices
-start = time.time()
+#start = time.time()
 Hmat = H(r,tha,gamma,dt,dr,dtha)
-end = time.time()
-print(start-end)
-Hbmat = Hb(r,tha,gamma,dt,dr,dtha)
+#end = time.time()
+#print(start-end)
+Hbmat = Hb(r,tha,gamma,dt,dr,dtha) # Should go away
 
-start = time.time()
-H_newMat = H_new(r,tha,gamma,dt,dr,dtha)
-end = time.time()
-print(start-end)
+#start = time.time()
+# H_newMat = H_new(r,tha,gamma,dt,dr,dtha)
+#end = time.time()
+#print(start-end)
+
+#print(np.equal(Hmat, H_newMat))
+
 #Temperature Array
 T1 = Tnew_t(Hmat,T0,Hbmat,q1,r,t,dt).round(2)
 
