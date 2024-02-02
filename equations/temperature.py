@@ -174,6 +174,10 @@ def H_final(r, tha, time, gamma, dt, dr, dtha):
 '''
 
 def H_final(r, tha, time, gamma, dt, dr, dtha):
+
+    # np.roll()
+    # gamma is alpha? k/rhocp
+
     from numpy import sin, cos
     H = __np.zeros( (r.size, tha.size, time.size) )
     H[:,:,0] = T0 # first timestep
@@ -191,7 +195,7 @@ def H_final(r, tha, time, gamma, dt, dr, dtha):
                     term += ((cos(tha[i])/sin(tha[i]))/(2*dtha))+(1/(dtha**2))  # contribution from H[i, j+1, t] if interior
                     term += ((cos(tha[j])/sin(tha[j]))/(2*dtha))+(1/(dtha**2))  # contribution from H[i, j-1, t] if interior
 
-                    H[:,:,t+1] = term # need a*dt?
+                    H[:,:,t+1] = term
 
 #Sums the elements in the inputed matrix
 # This is arr.sum()
