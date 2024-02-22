@@ -143,6 +143,8 @@ def H_new(r,tha,gamma,dt,dr,dtha):
     # Original if-blocks in Hb
     inds = __np.where((ig == kg) & ((tha.size-1) == mg))
     inds = __np.where((ig == kg) & (mg == 0))
+
+    k/rho cp is alpha/gamma
     '''
 
     H *= a*dt
