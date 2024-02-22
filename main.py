@@ -56,16 +56,31 @@ from equations.scipy_funcs import *
 from equations.stress import *
 from equations.graph import * #Need to fix this
 from equations.temperature import *
-import time
+#import time
+import threading
+
+funcs = [get_sigrr, get_sigphiphi, get_sigthatha, get_sigrtha]
+threads = []
+sigs = []
+
+for func in funcs:
+    thread = threading.Thread(target=lambda f: sigs.append(f()), args=(func,))
+    thread.start()
+    threads.append(thread)
+
+for thread in threads:
+    thread.join()
+    
+sigrr, sigphiphi, sigthatha, sigrtha = sigs
 
 # Stress Equations
-sigrr = get_sigrr(); print("sigrr equation done...")
+# sigrr = get_sigrr(); print("sigrr equation done...")
 
-sigphiphi = get_sigphiphi(); print("sigpp equation done...")
+# sigphiphi = get_sigphiphi(); print("sigpp equation done...")
 
-sigthatha = get_sigthatha(); print("sigtt equation done...")
+# sigthatha = get_sigthatha(); print("sigtt equation done...")
 
-sigrtha = get_sigrtha(); print("sigrt equation done...")
+# sigrtha = get_sigrtha(); print("sigrt equation done...")
 
 # Stress Graphs
 graph_eq(sigrr, name = "rR"); print("sigrr graph done...")
