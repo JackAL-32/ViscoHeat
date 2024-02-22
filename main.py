@@ -59,19 +59,23 @@ from equations.temperature import *
 #import time
 import threading
 
-funcs = [get_sigrr, get_sigphiphi, get_sigthatha, get_sigrtha]
-threads = []
-sigs = []
 
-for func in funcs:
-    thread = threading.Thread(target=lambda f: sigs.append(f()), args=(func,))
+funcs = {"get_sigrr": get_sigrr, "get_sigphiphi": get_sigphiphi, "get_sigthatha": get_sigthatha, "get_sigrtha": get_sigrtha}
+sigmas = {}
+threads = []
+
+for thread_name, func in funcs.items():
+    thread = threading.Thread(target=lambda f: sigmas.update({thread_name: f()}), args=(func,))
     thread.start()
     threads.append(thread)
 
 for thread in threads:
     thread.join()
-    
-sigrr, sigphiphi, sigthatha, sigrtha = sigs
+
+sigrr = sigmas["get_sigrr"]
+sigphiphi = sigmas["get_sigphiphi"]
+sigthatha = sigmas["get_sigthatha"]
+sigrtha = sigmas["get_sigrtha"]
 
 # Stress Graphs
 graph_eq(sigrr, name = "rR"); print("sigrr graph done...")
