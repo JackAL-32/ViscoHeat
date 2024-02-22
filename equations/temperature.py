@@ -150,29 +150,6 @@ def H_new(r,tha,gamma,dt,dr,dtha):
     return H
 
 
-# We should be able to do this if we descibe the boundary points well.
-# This would make everything one for loop, and we could operate on each timestep rather than each point.
-# This turns indexing and operating into just operating, which is much faster.
-'''
-def H_final(r, tha, time, gamma, dt, dr, dtha):
-    from numpy import sin, cos
-    H = __np.zeros( (r.size, tha.size, time.size) )
-    H[:,:,0] = T0 # first timestep
-
-    for t in range(time.size()-1):
-        # if boundary:
-
-        # else:
-            term = 0
-            term -= ((2*r**2)/(dr**2))-(2/(dtha**2))              # contribution from H[i , j , t] if interior
-            term += (r/dr)+((r**2)/(dr**2))                       # contribution from H[i+1, j, t] if interior
-            term += ((r**2)/(dr**2))-(r/dr)                       # contribution from H[i-1, j, t] if interior
-            term += ((cos(tha)/sin(tha))/(2*dtha))+(1/(dtha**2))  # contribution from H[i, j+1, t] if interior
-            term += ((cos(tha)/sin(tha))/(2*dtha))+(1/(dtha**2))  # contribution from H[i, j-1, t] if interior
-
-            H[:,:,t+1] = term
-'''
-
 def H_final(r, tha, time, gamma, dt, dr, dtha):
 
     # np.roll()

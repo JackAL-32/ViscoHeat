@@ -73,15 +73,6 @@ for thread in threads:
     
 sigrr, sigphiphi, sigthatha, sigrtha = sigs
 
-# Stress Equations
-# sigrr = get_sigrr(); print("sigrr equation done...")
-
-# sigphiphi = get_sigphiphi(); print("sigpp equation done...")
-
-# sigthatha = get_sigthatha(); print("sigtt equation done...")
-
-# sigrtha = get_sigrtha(); print("sigrt equation done...")
-
 # Stress Graphs
 graph_eq(sigrr, name = "rR"); print("sigrr graph done...")
 
@@ -92,7 +83,7 @@ graph_eq(sigthatha, name = "thetaTheta"); print("sigtt graph done...")
 graph_eq(sigrtha, name = "rTheta"); print("sigrt graph done...")
 
 # Volumetric Heat Generation Graph
-q1 = get_q1(sigrr, sigphiphi, sigthatha, sigrtha); print("q1 equation done...")
+q1 = get_q1(sigrr, sigphiphi, sigthatha, sigrtha)
 
 graph_eq(q1, "q1"); print("q1 graph done...")
 
