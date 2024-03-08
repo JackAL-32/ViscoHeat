@@ -2,23 +2,40 @@ import numpy as __np
 from equations.parameters import *
 from numpy import sin, cos
 
-def get_T(r, tha, time, gamma, dt, dr, dtha):
+def get_T(r, tha, time, gamma, dt, dr, dtha): # NEEDS "a"
     
-    T = __np.fill( shape=(r.size+2, tha.size+2, time.size), fill_value=T0 ) # include necessary padding area, and fill with T0.
+    T = __np.full(shape=(r.size+2, tha.size+2, time.size), fill_value=T0 ) # Maybe just +1 now???
     dTdt = __np.zeros((r.size, tha.size, time.size)) 
-    T34 = __np.zeros((r.size+2, tha.size+2, time.size))
+    T34 = __np.zeros((r.size+2, tha.size+2, time.size)) # Maybe just +1 now???
     dTdt34 = __np.zeros((r.size, tha.size, time.size))
+
+    r_exp = __np.tile(r, (T.shape[1],1)).T # Dupes r vector across columns
+    tha_exp = __np.tile(tha, (T.shape[0],1)) # Dupes tha vector across rows
+
+    # Mask the internal points
+    ptsInt = __np.full(shape=(r.size, tha.size), fill_value=True)
+    ptsInt[:, tha.size-1] = False # tha max
+    ptsInt[:, 0] = False # tha min
+    ptsInt[r.size-1, :] = False # r max
+    ptsInt[0, :] = False # r min
+    ptsInt[a, :] = False # r a
 
     # Initialize first timestep
     T[r.size+1, :, 1] = 21; # Tinf for rmax boundary
-    # At initial timestep all other boundary conds are T0.
+    # Everything else already T0
 
-    for t in range(time.size()):
-        # Interior cases:
-        ptsInt = __np.where()
+    # Every step except for 1st
+    for t in range(1, time.size()):
+
+        # Interior case:
+        Tu = __np.roll(T,  1, axis=0)
+        Td = __np.roll(T, -1, axis=0)
+        Tr = __np.roll(T, -1, axis=1)
+        Tl = __np.roll(T,  1, axis=1)
+        dTdt[ptsInt, t] =  gamma * (1/r_exp)
+
         # Boundary cases:
         # tha max
-
         # tha min
         # r max
         # r min
