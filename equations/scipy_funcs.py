@@ -34,7 +34,7 @@ def dPndTheta_1(n,tha):
         val2 = Pn_cos(tha,n-1)
 
         #Solving for the value of the first derivative of the Legendre Polynomial
-        value = ( -(n/2) * __np.sin(2*tha) * val1 ) + ( n * __np.sin(tha) * val2 )
+        value = ( (n/2) * __np.sin(2*tha) * val1 ) - ( n * __np.sin(tha) * val2 )
 
     return value
 
@@ -55,8 +55,8 @@ def dPndTheta_2(n,tha):
         val2 = Pn_cos(tha,n-1)
 
         #Solving for the value of second derivative of the Legendre Polynomial
-        value = ( (-n/2) * ( 2*__np.cos(2*tha) * val1 + __np.sin(2*tha) * dPndTheta_1(n,tha) )
-                + n * ( __np.cos(tha) * val2 + __np.sin(tha) * dPndTheta_1(n-1,tha)) )
+        value = ( (n/2) * ( 2*__np.cos(2*tha) * val1 + __np.sin(2*tha) * dPndTheta_1(n,tha) )
+                - n * ( __np.cos(tha) * val2 + __np.sin(tha) * dPndTheta_1(n-1,tha)) )
 
     return value
 
