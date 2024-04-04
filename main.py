@@ -57,6 +57,9 @@ from equations.stress import *
 from equations.graph import * #Need to fix this
 from equations.temperature import *
 import multiprocessing
+import time
+
+begin = time.time()
 
 def worker(func, result_dict):
     result_dict[func.__name__] = func()
@@ -91,7 +94,10 @@ if __name__ == "__main__":
     graph_eq(sigrtha, name = "rTheta"); print("sigrt graph done...")
 
     # Volumetric Heat Generation Graph
+    start = time.time()
     q1 = get_q1(sigrr, sigphiphi, sigthatha, sigrtha)
+    stop = time.time()
+    print(f"q1 calculated in {stop - start:.2f} seconds...")
 
     graph_eq(q1, "q1"); print("q1 graph done...")
 
@@ -127,6 +133,10 @@ if __name__ == "__main__":
     # Graph Temperature Gradient
 
     graph_temp_gr(T[:,:,(t.size-1)], shift = 21, name = "tempGradient"); print("temp graph done...")
+
+    end = time.time()
+    print(f"program completed in {end - begin:.2f} seconds!")
+
 
     # #Output IO
     # put_io("outi", "phiPhi", "Phi Stress on the Phi Face Image")

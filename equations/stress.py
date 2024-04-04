@@ -1,4 +1,5 @@
 import numpy as __np
+import time as __t
 from equations.scipy_funcs import Pn_cos, dPndTheta_1, dPndTheta_2, hn, jn, cot
 from equations.An_Bn import An_Bn
 
@@ -32,6 +33,8 @@ def sigrr_sum(r,tha):
 
 def get_sigrr(): #!These are repetitive. Need an elif chain giving a function
     #sigma_rr
+    start = __t.time()
+
     from equations.parameters import r, tha, u1
     sigrr = __np.zeros( (r.size,tha.size),dtype = complex )
 
@@ -43,6 +46,9 @@ def get_sigrr(): #!These are repetitive. Need an elif chain giving a function
     sigrr = __np.ndarray.tolist(__np.transpose(sigrr))
     sigrr.append(sigrr[0])
     sigrr = __np.array(sigrr)
+
+    stop = __t.time()
+    print(f"sigrr calculated in {stop - start:.2f} seconds...")
 
     return sigrr
 
@@ -83,6 +89,8 @@ def sigphiphi_sum(r,tha):
 
 def get_sigphiphi():
     #sigma_phiphi
+    start = __t.time()
+
     from equations.parameters import r, tha, u1
     sigphiphi = __np.zeros( (r.size,tha.size),dtype = complex )
 
@@ -95,6 +103,9 @@ def get_sigphiphi():
     sigphiphi = __np.ndarray.tolist(__np.transpose(sigphiphi))
     sigphiphi.append(sigphiphi[0])
     sigphiphi = __np.array(sigphiphi)
+    
+    stop = __t.time()
+    print(f"sigpp calculated in {stop - start:.2f} seconds...")
 
     return sigphiphi
     
@@ -134,6 +145,8 @@ def sigthatha_sum(r,tha):
 
 def get_sigthatha():
     #sigma_thetatheta
+    start = __t.time()
+
     from equations.parameters import r, tha, u1
     sigthatha = __np.zeros( (r.size,tha.size),dtype = complex )
 
@@ -145,6 +158,9 @@ def get_sigthatha():
     sigthatha = __np.ndarray.tolist(__np.transpose(sigthatha))
     sigthatha.append(sigthatha[0])
     sigthatha = __np.array(sigthatha)
+    
+    stop = __t.time()
+    print(f"sigtt calculated in {stop - start:.2f} seconds...")
 
     return sigthatha
 
@@ -177,6 +193,8 @@ def sigrtha_sum(r,tha):
 
 def get_sigrtha():
     #sigma_rtheta
+    start = __t.time()
+
     from equations.parameters import r, tha, u1
     sigrtha = __np.zeros( (r.size,tha.size),dtype = complex )
 
@@ -188,5 +206,8 @@ def get_sigrtha():
     sigrtha = __np.ndarray.tolist(__np.transpose(sigrtha))
     sigrtha.append(sigrtha[0])
     sigrtha = __np.array(sigrtha)
+    
+    stop = __t.time()
+    print(f"sigrt calculated in {stop - start:.2f} seconds...")
 
     return sigrtha
