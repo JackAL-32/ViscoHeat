@@ -27,14 +27,17 @@ def dPndTheta_1(n,tha):
     if n == 0:
         value = 1
 
-    #When n > 0 use general derivative formula
+    elif n == 1:
+        value = -__np.sin(tha)
+
+    #When n > 1 use general derivative formula
     else:
         #Solving for n = i and n = i - 1 polynomial values
         val1 = Pn_cos(tha,n)
         val2 = Pn_cos(tha,n-1)
 
         #Solving for the value of the first derivative of the Legendre Polynomial
-        value = ( (n/2) * __np.sin(2*tha) * val1 ) - ( n * __np.sin(tha) * val2 )
+        value = (n * cot(tha) * val1) - (n * (1/__np.sin(tha)) * val2)
 
     return value
 
@@ -47,7 +50,7 @@ def dPndTheta_2(n,tha):
 
     #When n = 1 derivative formula would be undefined (solved by hand)
     elif n == 1:
-        value = -0.25 * (-__np.cos(tha) + 9*__np.cos(3*tha))
+        value = -__np.cos(tha)
 
     else:
         #Solving for n = i and n = i - 1 polynomial values
@@ -55,8 +58,8 @@ def dPndTheta_2(n,tha):
         val2 = Pn_cos(tha,n-1)
 
         #Solving for the value of second derivative of the Legendre Polynomial
-        value = ( (n/2) * ( 2*__np.cos(2*tha) * val1 + __np.sin(2*tha) * dPndTheta_1(n,tha) )
-                - n * ( __np.cos(tha) * val2 + __np.sin(tha) * dPndTheta_1(n-1,tha)) )
+        value = n * ( ( (-(1/__np.sin(tha))**2 * val1) + (cot(tha) * dPndTheta_1(n,tha)) ) +
+                     ( ((cot(tha)/__np.sin(tha)) * val2) - ((1/__np.sin(tha)) * dPndTheta_1(n-1,tha)) ) )
 
     return value
 
