@@ -18,7 +18,7 @@ def get_T(r, tha, time, gamma, dt, dr, dtha): # NEEDS "a"
     ptsInt[:, 0] = False # tha min
     ptsInt[r.size-1, :] = False # r max
     ptsInt[0, :] = False # r min
-    ptsInt[a, :] = False # r a
+    ptsInt[a, :] = False # r a wrong atm, needs to be index of a
 
     # Initialize first timestep
     T[r.size+1, :, 1] = 21; # Tinf for rmax boundary
