@@ -6,7 +6,7 @@ import numpy as __np
 
 #Cotangent function 
 def cot(tha):
-    if tha == 0 or tha == __np.pi: #if tha % __np.pi == 0: is probably better
+    if tha % __np.pi == 0: #if tha % __np.pi == 0: is probably better
         return 0
     else:
         return 1/__np.tan(tha)
@@ -25,7 +25,7 @@ def Pn_cos(tha,n):
 def dPndTheta_1(n,tha):
     #When n = 0 derivative formula would be undefined (solved by hand)
     if n == 0:
-        value = 1
+        value = 0
 
     elif n == 1:
         value = -__np.sin(tha)
