@@ -6,42 +6,62 @@ import numpy as __np
 
 #Cotangent function 
 def cot(tha):
-    if tha == 0 or tha == __np.pi: #if tha % __np.pi == 0: is probably better
+    if tha % __np.pi == 0: #if tha % __np.pi == 0: is probably better
         return 0
     else:
         return 1/__np.tan(tha)
 
-#P_n: Legendre Polynomials
-def Pn(n):
-    return __scisp.legendre(n)
-#n: int
-#Degree of the polynomial.
+#Finding the Legendre Polynomial in terms of cos(theta)
+def Pn_cos(tha,n):
+    x = __np.cos(tha)
+
+    leg = __scisp.legendre(n)
+    val = leg(x)
+
+    return val
 
 
-def Pndev1(n,x):
-    return -(n+1)*(x*Pn(n)(x)-Pn(n+1)(x))/(x**2 - 1)
-
-
-#d(P_n)/dtheta: derivatives of Legendre Polynomials
-def dPndtha(m,n,x,tha):
+#First derivative of Legendre Poly. 
+def dPndTheta_1(n,tha):
+    #When n = 0 derivative formula would be undefined (solved by hand)
     if n == 0:
-        return 0
-        
+        value = 0
+
     elif n == 1:
-        if m == 1:
-            return -__np.sin(tha)*Pndev1(n,x)
-        elif m == 2:
-            return -__scisp.lpmv(1,n,x)*(cot(tha))
-        else:
-            raise TypeError("Invalid input. The first term should be a 1 or a 2")
-        
-    elif n > 1:
-        if m == 1:
-            return -__np.sin(tha)*Pndev1(n,x)
-        elif m == 2:
-            return __scisp.lpmv(2,n,x) - __scisp.lpmv(1,n,x)*(cot(tha))
-        else:
-            raise TypeError("Invalid input. The first term should be a 1 or a 2")
+        value = -__np.sin(tha)
+
+    #When n > 1 use general derivative formula
+    else:
+        #Solving for n = i and n = i - 1 polynomial values
+        val1 = Pn_cos(tha,n)
+        val2 = Pn_cos(tha,n-1)
+
+        #Solving for the value of the first derivative of the Legendre Polynomial
+        value = (n * cot(tha) * val1) - (n * (1/__np.sin(tha)) * val2)
+
+    return value
+
+
+#Second derivative of Legendre Poly.
+def dPndTheta_2(n,tha):
+    #When n = 0 derivative formula would be undefined (solved by hand)
+    if n == 0:
+        value = 0
+
+    #When n = 1 derivative formula would be undefined (solved by hand)
+    elif n == 1:
+        value = -__np.cos(tha)
+
+    else:
+        #Solving for n = i and n = i - 1 polynomial values
+        val1 = Pn_cos(tha,n)
+        val2 = Pn_cos(tha,n-1)
+
+        #Solving for the value of second derivative of the Legendre Polynomial
+        value = n * ( ( (-(1/__np.sin(tha))**2 * val1) + (cot(tha) * dPndTheta_1(n,tha)) ) +
+                     ( ((cot(tha)/__np.sin(tha)) * val2) - ((1/__np.sin(tha)) * dPndTheta_1(n-1,tha)) ) )
+
+    return value
 
 #h_n: Spherical Hankel Function of the first kind
 def hn(n,z):
