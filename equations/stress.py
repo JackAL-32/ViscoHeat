@@ -1,6 +1,5 @@
-from numpy import cos as __cos
 import numpy as __np
-from equations.scipy_funcs import Pn, dPndtha, hn, jn, cot
+from equations.scipy_funcs import Pn_cos, dPndTheta_1, dPndTheta_2, hn, jn, cot
 from equations.An_Bn import An_Bn
 
 
@@ -13,7 +12,7 @@ def sigrr_sum(r,tha):
     for n in range(0, 85):
         An, Bn = An_Bn(n)
         sigsum += ( 
-            Pn(n)(__cos(tha)) * 
+             Pn_cos(tha,n) * 
             ( 
                 P * (1j)**n * (2*n + 1) * 
                 ( 
@@ -57,7 +56,7 @@ def sigphiphi_sum(r,tha):
         An, Bn = An_Bn(n)
         sigsum += (
             ( 
-                Pn(n)(__cos(tha)) * 
+                Pn_cos(tha,n) * 
                 ( 
                     P * (1j)**n * ( 2*n + 1 ) * 
                     ( 
@@ -69,7 +68,7 @@ def sigphiphi_sum(r,tha):
                     ) - 
                     Bn * n * (n + 1) * hn(n,(B1*r))
                 ) + 
-                cot(tha)*dPndtha(1,n,__cos(tha),tha) * 
+                cot(tha)*dPndTheta_1(n,tha) * 
                 (
                     P * (1j)**n * (2*n + 1) * jn(n,(a1*r)) + 
                     An * hn(n,(a1*r)) - 
@@ -109,7 +108,7 @@ def sigthatha_sum(r,tha):
         An, Bn = An_Bn(n)
         sigsum += (
             (
-                Pn(n)(__cos(tha)) * 
+                Pn_cos(tha,n) * 
                 (
                     P * (1j)**n * ( 2*n + 1 ) * 
                     ( 
@@ -121,7 +120,7 @@ def sigthatha_sum(r,tha):
                     ) - 
                     Bn * n * (n + 1) * hn(n,(B1*r))
                 ) +
-                dPndtha(2,n,__cos(tha),tha) * 
+                dPndTheta_2(n,tha) * 
                 (
                     P * (1j)**n * (2*n + 1) * jn(n,(a1 * r)) + An * hn(n,(a1*r)) - 
                     Bn * 
@@ -158,7 +157,7 @@ def sigrtha_sum(r,tha):
     for n in range(0, 85):
         An, Bn = An_Bn(n)
         sigsum += ( 
-            dPndtha(1,n,__cos(tha),tha) * 
+            dPndTheta_1(n,tha) * 
             (
                 P * (1j)**n * (2*n + 1) * 
                 ( 
