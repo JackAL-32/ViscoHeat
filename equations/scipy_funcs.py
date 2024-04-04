@@ -6,8 +6,7 @@ import numpy as __np
 
 #Cotangent function 
 def cot(tha):
-    if tha % __np.pi == 0: #if tha % __np.pi == 0: is probably better
-    if tha % __np.pi == 0: #if tha % __np.pi == 0: is probably better
+    if tha % __np.pi == 0:
         return 0
     else:
         return 1/__np.tan(tha)
