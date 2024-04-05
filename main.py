@@ -113,16 +113,11 @@ if __name__ == "__main__":
 
     # Stress Graphs
     graph_eq(sigrr, name = "rR"); print("sigrr graph done...")
-    # Stress Graphs
-    graph_eq(sigrr, name = "rR"); print("sigrr graph done...")
 
-    graph_eq(sigphiphi, name = "phiPhi"); print("sigpp graph done...")
     graph_eq(sigphiphi, name = "phiPhi"); print("sigpp graph done...")
 
     graph_eq(sigthatha, name = "thetaTheta"); print("sigtt graph done...")
-    graph_eq(sigthatha, name = "thetaTheta"); print("sigtt graph done...")
 
-    graph_eq(sigrtha, name = "rTheta"); print("sigrt graph done...")
     graph_eq(sigrtha, name = "rTheta"); print("sigrt graph done...")
 
     # Volumetric Heat Generation Graph
@@ -130,41 +125,24 @@ if __name__ == "__main__":
     q1 = get_q1(sigrr, sigphiphi, sigthatha, sigrtha)
     stop = time.time()
     print(f"q1 calculated in {stop - start:.2f} seconds...")
-    # Volumetric Heat Generation Graph
-    start = time.time()
-    q1 = get_q1(sigrr, sigphiphi, sigthatha, sigrtha)
-    stop = time.time()
-    print(f"q1 calculated in {stop - start:.2f} seconds...")
 
-    graph_eq(q1, "q1"); print("q1 graph done...")
     graph_eq(q1, "q1"); print("q1 graph done...")
 
     # Input for Tempurature Gradient
-    # Input for Tempurature Gradient
 
-    #Initial Tempurature
-    T0 = 21 #degC
     #Initial Tempurature
     T0 = 21 #degC
 
     #Theta increment
     dtha = tha[1]-tha[0]
-    #Theta increment
-    dtha = tha[1]-tha[0]
-
-    #r increment
-    dr = a
+    
     #r increment
     dr = a
 
     #t array and increment
     dt = 0.01*(dr**2/gamma * 0.2)
     t = np.arange(0,0.5,dt)
-    #t array and increment
-    dt = 0.01*(dr**2/gamma * 0.2)
-    t = np.arange(0,0.5,dt)
 
-    q1 = dt*(gamma/k1)*q1
     q1 = dt*(gamma/k1)*q1
 
     # Temperature Gradient
@@ -175,8 +153,6 @@ if __name__ == "__main__":
 
     #Temperature Array
     T1 = Tnew_t(Hmat,T0,Hbmat,q1,r,t,dt).round(2)
-    #Temperature Array
-    T1 = Tnew_t(Hmat,T0,Hbmat,q1,r,t,dt).round(2)
 
     #Filling in Gap
     T = FillGap(T1,r,tha1,t)
@@ -184,28 +160,12 @@ if __name__ == "__main__":
     print(f"temp matrix calculated in {stop - start:.2f} seconds...")
 
     # Graph Temperature Gradient
-    # Graph Temperature Gradient
 
     graph_temp_gr(T[:,:,(t.size-1)], shift = 21, name = "tempGradient"); print("temp graph done...")
 
     end = time.time()
     print(f"program completed in {end - begin:.2f} seconds!")
 
-    graph_temp_gr(T[:,:,(t.size-1)], shift = 21, name = "tempGradient"); print("temp graph done...")
-
-    end = time.time()
-    print(f"program completed in {end - begin:.2f} seconds!")
-
-
-    # #Output IO
-    # put_io("outi", "phiPhi", "Phi Stress on the Phi Face Image")
-    # put_io("outj", "rR", "Radial Stress on the Radius Face Image")
-    # put_io("outk", "thetaTheta", "Theta Stress on the Theta Face Image")
-    # put_io("outl", "rTheta", "Radial Stress on the Theta Face Image")
-    # put_io("outm", "q1", "Volumetric Heat Generation Image")
-    # put_io("outn", "T", "Temperature Gradient Image")
-    # 
-    # close_io()
     # #Output IO
     # put_io("outi", "phiPhi", "Phi Stress on the Phi Face Image")
     # put_io("outj", "rR", "Radial Stress on the Radius Face Image")
