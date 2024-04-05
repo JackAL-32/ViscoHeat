@@ -105,7 +105,79 @@ def Hb(r,tha,gamma,dt,dr,dtha):
                     mat[k,m,i,j] = value
     return mat
 
+#Matrix that is built from the diffusion equation that evolves the tempurature.
+def H_new(r,tha,gamma,dt,dr,dtha):
+    a = gamma
+    from numpy import cos
+    H = __np.zeros( (r.size,tha.size,r.size,r.size) )
+    ig,jg,kg,mg = __np.mgrid[0:r.size, 0:tha.size, 0:r.size, 0:r.size]
+    #Delta inds then add to equation in 2 lines. a*dt at the end
+    #For boundaries just set to the value 
+    
+    # Original H
+    inds = __np.where((ig == kg) & (jg-1 == mg))
+    H[inds] += 1/(r[ig][inds]**2 * dtha**2) - cos(tha[jg][inds])/(2 * r[ig][inds]**2 * __np.sin(tha[jg][inds]) * dtha)
+    inds = __np.where((ig-1 == kg) & (jg == mg))
+    H[inds] += 1/(dr**2) - 1/(r[ig][inds]*dr)
+    inds = __np.where((ig == kg) & (jg == mg))
+    H[inds] -= 2/(dr**2) + 2/(r[ig][inds]**2 * dtha**2) - 1/(a*dt) #-= is not a typo
+    inds = __np.where((ig+1 == kg) & (jg == mg))
+    H[inds] += 1/(dr**2) + 1/(r[ig][inds]*dr)
+    inds = __np.where((ig == kg) & (jg+1 == mg))
+    H[inds] += cos(tha[jg][inds])/(2 * r[ig][inds]**2 * __np.sin(tha[jg][inds]) * dtha) + 1/(r[ig][inds]**2 * dtha**2)
+
+    # Original if-blocks in H
+    inds = __np.where((ig == 0) & (kg == 1) & (jg == mg)) # ig + 1 == kg?
+    H[inds] += 1/(dr**2) - 1/(r[ig][inds]*dr)
+    inds = __np.where((jg == 0) & (ig == kg) & (tha.size-1 == mg))
+    H[inds] += 1/(r[ig][inds]**2 * dtha**2) - cos(tha[jg][inds])/(2 * r[ig][inds]**2 * __np.sin(tha[jg][inds]) * dtha)
+    inds = __np.where((jg == tha.size-1) & (mg == 0) & (ig == kg))
+    H[inds] += cos(tha[jg][inds])/(2 * r[ig][inds]**2 * __np.sin(tha[jg][inds]) * dtha) + 1/(r[ig][inds]**2 * dtha**2)
+
+    '''
+    # Original Hb
+    inds = __np.where((ig == kg) & (jg-1 == mg))
+    inds = __np.where((ig == kg) & (jg == mg))
+    inds = __np.where((ig == kg) & (jg+1 == mg))
+
+    # Original if-blocks in Hb
+    inds = __np.where((ig == kg) & ((tha.size-1) == mg))
+    inds = __np.where((ig == kg) & (mg == 0))
+
+    k/rho cp is alpha/gamma
+    '''
+
+    H *= a*dt
+
+    return H
+
+
+def H_final(r, tha, time, gamma, dt, dr, dtha):
+
+    # np.roll()
+    # gamma is alpha? k/rhocp
+
+    from numpy import sin, cos
+    H = __np.zeros( (r.size, tha.size, time.size) )
+    H[:,:,0] = T0 # first timestep
+
+    for t in range(time.size()-1):
+        for i in range(r.size()):
+            for j in range(tha.size()):
+                # if boundary:
+
+                # else:
+                    term = 0
+                    term -= ((2*r[i]**2)/(dr**2))-(2/(dtha**2))                 # contribution from H[i , j , t] if interior
+                    term += (r[i]/dr)+((r[i]**2)/(dr**2))                       # contribution from H[i+1, j, t] if interior
+                    term += ((r[i]**2)/(dr**2))-(r[i]/dr)                       # contribution from H[i-1, j, t] if interior
+                    term += ((cos(tha[i])/sin(tha[i]))/(2*dtha))+(1/(dtha**2))  # contribution from H[i, j+1, t] if interior
+                    term += ((cos(tha[j])/sin(tha[j]))/(2*dtha))+(1/(dtha**2))  # contribution from H[i, j-1, t] if interior
+
+                    H[:,:,t+1] = term
+
 #Sums the elements in the inputed matrix
+# This is arr.sum()
 def matsum(mat,x):
     add = 0
     for i in range(x.size):
@@ -119,11 +191,14 @@ def Tnew(mat1,mat2,mat3,q,x,dt):
     
     for i in range(x.size):
         for j in range(x.size):
+
+            # Hb stuff
             if i == (x.size-1):
                 A = __np.multiply(mat3[:,:,i,j],mat2)
                 add = matsum(A,x)
                 T[i,j] = add + q[j,i] + B(x,dt)[i]
                 
+            # H stuff
             else:
                 
                 #if 0 == i and 0 <= j and j <= 2:

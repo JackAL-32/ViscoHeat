@@ -56,71 +56,95 @@ from equations.scipy_funcs import *
 from equations.stress import *
 from equations.graph import * #Need to fix this
 from equations.temperature import *
+import multiprocessing
+import time
 
+begin = time.time()
 
+def worker(func, result_dict):
+    result_dict[func.__name__] = func()
 
-# Stress Equations
-sigrr = get_sigrr(); print("sigrr equation done...")
+if __name__ == "__main__":
+    manager = multiprocessing.Manager()
+    sigmas = manager.dict()
 
-sigphiphi = get_sigphiphi(); print("sigpp equation done...")
+    funcs = [get_sigrr, get_sigphiphi, get_sigthatha, get_sigrtha]
 
-sigthatha = get_sigthatha(); print("sigtt equation done...")
+    processes = []
+    for func in funcs:
+        process = multiprocessing.Process(target=worker, args=(func, sigmas))
+        process.start()
+        processes.append(process)
 
-sigrtha = get_sigrtha(); print("sigrt equation done...")
+    for process in processes:
+        process.join()
 
-# Stress Graphs
-graph_eq(sigrr, name = "rR"); print("sigrr graph done...")
+    sigrr = sigmas["get_sigrr"]
+    sigphiphi = sigmas["get_sigphiphi"]
+    sigthatha = sigmas["get_sigthatha"]
+    sigrtha = sigmas["get_sigrtha"]
 
-graph_eq(sigphiphi, name = "phiPhi"); print("sigpp graph done...")
+    # Stress Graphs
+    graph_eq(sigrr, name = "rR"); print("sigrr graph done...")
 
-graph_eq(sigthatha, name = "thetaTheta"); print("sigtt graph done...")
+    graph_eq(sigphiphi, name = "phiPhi"); print("sigpp graph done...")
 
-graph_eq(sigrtha, name = "rTheta"); print("sigrt graph done...")
+    graph_eq(sigthatha, name = "thetaTheta"); print("sigtt graph done...")
 
-# Volumetric Heat Generation Graph
-q1 = get_q1(sigrr, sigphiphi, sigthatha, sigrtha); print("q1 equation done...")
+    graph_eq(sigrtha, name = "rTheta"); print("sigrt graph done...")
 
-graph_eq(q1, "q1"); print("q1 graph done...")
+    # Volumetric Heat Generation Graph
+    start = time.time()
+    q1 = get_q1(sigrr, sigphiphi, sigthatha, sigrtha)
+    stop = time.time()
+    print(f"q1 calculated in {stop - start:.2f} seconds...")
 
-# Input for Tempurature Gradient
+    graph_eq(q1, "q1"); print("q1 graph done...")
 
-#Initial Tempurature
-T0 = 21 #degC
+    # Input for Tempurature Gradient
 
-#Theta increment
-dtha = tha[1]-tha[0]
+    #Initial Tempurature
+    T0 = 21 #degC
 
-#r increment
-dr = a
+    #Theta increment
+    dtha = tha[1]-tha[0]
+    
+    #r increment
+    dr = a
 
-#t array and increment
-dt = 0.01*(dr**2/gamma * 0.2)
-t = np.arange(0,0.5,dt)
+    #t array and increment
+    dt = 0.01*(dr**2/gamma * 0.2)
+    t = np.arange(0,0.5,dt)
 
-q1 = dt*(gamma/k1)*q1
+    q1 = dt*(gamma/k1)*q1
 
-# Temperature Gradient
+    # Temperature Gradient
+    start = time.time()
+    #Iteration Matrices
+    Hmat = H(r,tha,gamma,dt,dr,dtha)
+    Hbmat = Hb(r,tha,gamma,dt,dr,dtha) # Should go away
 
-#Iteration Matrices
-Hmat = H(r,tha,gamma,dt,dr,dtha)
-Hbmat = Hb(r,tha,gamma,dt,dr,dtha)
+    #Temperature Array
+    T1 = Tnew_t(Hmat,T0,Hbmat,q1,r,t,dt).round(2)
 
-#Temperature Array
-T1 = Tnew_t(Hmat,T0,Hbmat,q1,r,t,dt).round(2)
+    #Filling in Gap
+    T = FillGap(T1,r,tha1,t)
+    stop = time.time()
+    print(f"temp matrix calculated in {stop - start:.2f} seconds...")
 
-#Filling in Gap
-T = FillGap(T1,r,tha1,t)
+    # Graph Temperature Gradient
 
-# Graph Temperature Gradient
+    graph_temp_gr(T[:,:,(t.size-1)], shift = 21, name = "tempGradient"); print("temp graph done...")
 
-graph_temp_gr(T[:,:,(t.size-1)], shift = 21, name = "tempGradient"); print("temp graph done...")
+    end = time.time()
+    print(f"program completed in {end - begin:.2f} seconds!")
 
-# #Output IO
-# put_io("outi", "phiPhi", "Phi Stress on the Phi Face Image")
-# put_io("outj", "rR", "Radial Stress on the Radius Face Image")
-# put_io("outk", "thetaTheta", "Theta Stress on the Theta Face Image")
-# put_io("outl", "rTheta", "Radial Stress on the Theta Face Image")
-# put_io("outm", "q1", "Volumetric Heat Generation Image")
-# put_io("outn", "T", "Temperature Gradient Image")
-# 
-# close_io()
+    # #Output IO
+    # put_io("outi", "phiPhi", "Phi Stress on the Phi Face Image")
+    # put_io("outj", "rR", "Radial Stress on the Radius Face Image")
+    # put_io("outk", "thetaTheta", "Theta Stress on the Theta Face Image")
+    # put_io("outl", "rTheta", "Radial Stress on the Theta Face Image")
+    # put_io("outm", "q1", "Volumetric Heat Generation Image")
+    # put_io("outn", "T", "Temperature Gradient Image")
+    # 
+    # close_io()
