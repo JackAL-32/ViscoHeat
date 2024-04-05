@@ -83,33 +83,6 @@ if __name__ == "__main__":
     sigphiphi = sigmas["get_sigphiphi"]
     sigthatha = sigmas["get_sigthatha"]
     sigrtha = sigmas["get_sigrtha"]
-import multiprocessing
-import time
-
-begin = time.time()
-
-def worker(func, result_dict):
-    result_dict[func.__name__] = func()
-
-if __name__ == "__main__":
-    manager = multiprocessing.Manager()
-    sigmas = manager.dict()
-
-    funcs = [get_sigrr, get_sigphiphi, get_sigthatha, get_sigrtha]
-
-    processes = []
-    for func in funcs:
-        process = multiprocessing.Process(target=worker, args=(func, sigmas))
-        process.start()
-        processes.append(process)
-
-    for process in processes:
-        process.join()
-
-    sigrr = sigmas["get_sigrr"]
-    sigphiphi = sigmas["get_sigphiphi"]
-    sigthatha = sigmas["get_sigthatha"]
-    sigrtha = sigmas["get_sigrtha"]
 
     # Stress Graphs
     graph_eq(sigrr, name = "rR"); print("sigrr graph done...")
