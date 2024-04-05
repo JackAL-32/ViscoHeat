@@ -119,7 +119,7 @@ if __name__ == "__main__":
     q1 = dt*(gamma/k1)*q1
 
     # Temperature Gradient
-
+    start = time.time()
     #Iteration Matrices
     Hmat = H(r,tha,gamma,dt,dr,dtha)
     Hbmat = Hb(r,tha,gamma,dt,dr,dtha) # Should go away
@@ -129,6 +129,8 @@ if __name__ == "__main__":
 
     #Filling in Gap
     T = FillGap(T1,r,tha1,t)
+    stop = time.time()
+    print(f"temp matrix calculated in {stop - start:.2f} seconds...")
 
     # Graph Temperature Gradient
 
