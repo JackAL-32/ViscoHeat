@@ -108,7 +108,7 @@ if __name__ == "__main__":
 
     #Theta increment
     dtha = tha[1]-tha[0]
-
+    
     #r increment
     dr = a
 
@@ -138,7 +138,6 @@ if __name__ == "__main__":
 
     end = time.time()
     print(f"program completed in {end - begin:.2f} seconds!")
-
 
     # #Output IO
     # put_io("outi", "phiPhi", "Phi Stress on the Phi Face Image")
