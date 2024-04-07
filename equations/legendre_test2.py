@@ -2,6 +2,8 @@
 #Author: Paige Doughman
 #legendre_test2.py: Legendre functions for Visco. Heat. project
 
+# Adding to gitignore
+
 #Need to evaluate every "x-value" for every n-value
 
 import numpy as __np

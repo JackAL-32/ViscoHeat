@@ -1,68 +1,113 @@
 import numpy as __np
 from equations.parameters import *
-from numpy import sin, cos
 
-def get_T(r, tha, time, gamma, dt, dr, dtha): # NEEDS "a"
+def cot(tha):
+    return 1/__np.tan(tha)
+
+def get_dTdt(r, tha, dr, dtha, a_ind, ptsInt, T):
+
+    dTdt = __np.zeros((r.size, tha.size)) 
+
+    # Roll in with the padding, truncate garbage to correct dimensions
+    Ti1j = __np.roll(T, -1, axis=0)[:-1, 1:-1]
+    Tin1j = __np.roll(T, 1, axis=0)[:-1, 1:-1]
+    Tij1 = __np.roll(T, -1, axis=1)[:-1, 1:-1]
+    Tijn1 = __np.roll(T, 1, axis=1)[:-1, 1:-1]
+    Ti2j = __np.roll(T, -2, axis=0)[:-1, 1:-1]
+    Ti3j = __np.roll(T, -3, axis=0)[:-1, 1:-1]
+    Tij2 = __np.roll(T, -2, axis=1)[:-1, 1:-1]
+    Tij3 = __np.roll(T, -3, axis=1)[:-1, 1:-1]
+
+    # Interior case:
+    dTdt[ptsInt] =  gamma * (1/(r**2)) * ( 
+            (((r/dr) + ((r**2)/dr**2)) * Ti1j) 
+        + ((((r**2)/dr**2) - (r/dr)) * Tin1j) 
+        + (((cot(tha)/(2*dtha)) + (1/(dtha**2))) * Tij1) 
+        + (((cot(tha)/(2*dtha)) + (1/(dtha**2))) * Tijn1)
+        - ((((2*(r**2))/dr**2) - (2/(dtha**2))) * T[:-1, 1:-1])) # Needs trailing const
+                            
+    # Boundary cases:
+    # tha max: Equation 6
+    dTdt[:, -1] = gamma * (1/(r**2)) * ( 
+            ((((-2*(r**2))/(dr**2)) + (cot(tha)/(2*dtha)) - (1/(dtha**2))) * T[:-1, 1:-1]) 
+        + (((r/dr) + (r**2/(dr**2))) * Ti1j) 
+        + (((r**2/(dr**2)) - (r/dr)) * Tin1j) 
+        + (((1/(dtha**2)) - (cot(tha)/(2*dtha))) * Tijn1)) # Needs trailing const
+
+    # tha min: Equation 5
+    dTdt[:, 0] = gamma * (1/(r**2)) * (
+        - ((((2*r**2)/(dr**2)) + (cot(tha)/(2*dtha)) + (1/(dtha**2))) * T[:-1, 1:-1]) 
+        + (((r/dr) + (r**2/(dr**2))) * Ti1j)
+        + (((r**2/(dr**2)) - (r/dr)) * Tin1j)
+        + (((cot(tha)/(2*dtha)) + (1/(dtha**2))) * Tij1)) # Needs trailing const
+
+    # r a: Equation 3 right
+    dTdt[a_ind, :] = gamma * (1/(r**2)) * (
+            ((((-3*r)/dr) + ((2*r)/dr**2) - ((3*cot(tha))/(2*dtha)) + (2/(dtha**2))) * T[:-1, 1:-1])
+        + ((((4*r)/dr) - ((5*r**2)/dr**2)) * Ti1j)
+        + ((((4*r**2)/(dr**2)) - (r/dr)) * Ti2j)
+        - (((r**2)/(dr**2)) * Ti3j)
+        + ((((2*cot(tha))/dtha) - (5/(dtha**2))) * Tij1)
+        + (((4/(dtha**2)) - (cot(tha)/(2*dtha))) * Tij2)
+        - ((1/(dtha**2)) * Tij3)) # Needs trailing const
+
+    # r max: Should be handled as an internal point with Tinf padding
+    # r min: Derivative estimate? Emailed Dr.Baker
+
+    return dTdt
+
+def get_T(r, tha, time, gamma, dt, dr, dtha): # NEEDS "a" , "T0"
+
+    # Append points to r
+    # Need to be careful with input sanitization to discretize so we get exactly 0 and exactly a in the linspace
+    step_size = r[1] - r[0]
+    num_additional_points = int(a/step_size)
+    extra_points = __np.linspace(0, a-step_size, num_additional_points)
+    r = __np.concatenate((extra_points, r))
     
-    T = __np.full(shape=(r.size+2, tha.size+2, time.size), fill_value=T0 ) # Maybe just +1 now???
+    # Declare necessary arrays for Ralston's Method
+    T = __np.full(shape=(r.size+1, tha.size+2, time.size), fill_value=T0 )
     dTdt = __np.zeros((r.size, tha.size, time.size)) 
-    T34 = __np.zeros((r.size+2, tha.size+2, time.size)) # Maybe just +1 now???
+    T34 = __np.zeros((r.size+1, tha.size+2, time.size))
     dTdt34 = __np.zeros((r.size, tha.size, time.size))
 
-    r_exp = __np.tile(r, (T.shape[1],1)).T # Dupes r vector across columns
-    tha_exp = __np.tile(tha, (T.shape[0],1)) # Dupes tha vector across rows
+    # Tiling r and tha for matix operations
+    r_exp = __np.tile(r, (dTdt.shape[1],1)).T # Dupes r vector across columns
+    tha_exp = __np.tile(tha, (dTdt.shape[0],1)) # Dupes tha vector across rows
 
     # Mask the internal points
     ptsInt = __np.full(shape=(r.size, tha.size), fill_value=True)
-    ptsInt[:, tha.size-1] = False # tha max
-    ptsInt[:, 0] = False # tha min
-    ptsInt[r.size-1, :] = False # r max
-    ptsInt[0, :] = False # r min
-    ptsInt[a, :] = False # r a wrong atm, needs to be index of a
+    ptsInt[:, -1] = False  # tha max
+    ptsInt[:, 0] = False  # tha min
+    ptsInt[-1, :] = False  # r max
+    ptsInt[0, :] = False  # r min
+    a_ind = __np.where(r == a)[0][0] # find r = a
+    ptsInt[a_ind, :] = False # r = a
 
-    # Initialize first timestep
-    T[r.size+1, :, 1] = 21; # Tinf for rmax boundary
-    # Everything else already T0
+    for t in range(0, time.size-1):
 
-    # Every step except for 1st
-    for t in range(1, time.size()):
-
-        # Interior case:
-        Tu = __np.roll(T,  1, axis=0)
-        Td = __np.roll(T, -1, axis=0)
-        Tr = __np.roll(T, -1, axis=1)
-        Tl = __np.roll(T,  1, axis=1)
-        dTdt[ptsInt, t] =  gamma * (1/r_exp)
-
-        # Boundary cases:
-        # tha max
-        # tha min
-        # r max
-        # r min
-        # r a
+        # Pad with reflection of itself at tha = pi,0 boundaries
+        T[:,0,t] = T[:,1,t]
+        T[:,-1,t] = T[:,-2,t]
         
+        # Pad with Tinf at medium-air boundary (r max padding)
+        T[-1,:,t] = 21
 
+        # r min padding? Derivative estimate? Emailed Dr.Baker. May go in get_dTdt
 
+        # Calculate dTdt
+        dTdt[:,:,t] = get_dTdt(r_exp, tha_exp, dr, dtha, a_ind, ptsInt, T[:,:,t])
 
+        # Estimate T34, include padding
+        T34[:-1, 1:-1,t] = T[:-1, 1:-1,t] + dTdt * dt * (3/4)
+        T34[:,0,t] = T34[:,1,t]
+        T34[:,-1,t] = T34[:,-2,t]
 
+        # Calculate dTdt34
+        dTdt34[:,:,t] = get_dTdt(r_exp, tha_exp, dr, dtha, a_ind, ptsInt, T34[:,:,t])
 
+        # Ralston's method to estimate T at next timestep
+        T[:-1, 1:-1,t+1] = T[:-1, 1:-1,t] + (dt/3) * (dTdt + (2*dTdt34)) 
 
-
-        for i in range(r.size()):
-            for j in range(tha.size()):
-                if i == 0: dTdt[i,j,t] = 0 #Eqn1
-                if i == a: dTdt[i,j,t] = 0 #Eqn3
-                if j == (tha.size()-1): term = 0 #Eqn6
-                if j == 0: term = 0 #Eqn5
-                else: term = 0 #Eqn0
-
-
-                
-
-
-
-
-        # r = 0, Eqn 1
-        # r = a, Eqn 3 L or R (particle/binder boundary)
-        # tha = last tha, Eqn 6
-        # tha = first tha, Eqn 5
+    # Strip the padding and return T
+    return T[:-1, 1:-1,:]
