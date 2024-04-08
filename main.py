@@ -5,14 +5,14 @@
 # a = get_io("SysConfig", "CrystalRadius")
 # f = get_io("SysConfig", "Omega")
 # N = get_io("SysConfig", "VariableN")
-# 
+#
 # # MechProp
 # v1 = get_io("MechProp", "LongWaveSpeed")
 # X1 = get_io("MechProp", "LongWaveAttenuation")
 # v2 = get_io("MechProp", "ShearWaveSpeed")
 # p = get_io("MechProp", "Density1")
 # p2 = get_io("MechProp", "Density2")
-# 
+#
 # # ThermalProp
 # k1 = get_io("HeatProperties", "ThermalConductivity")
 # gamma = get_io("HeatProperties", "ThermalDiffusivity")
@@ -85,13 +85,17 @@ if __name__ == "__main__":
     sigrtha = sigmas["get_sigrtha"]
 
     # Stress Graphs
-    graph_eq(sigrr, name = "rR"); print("sigrr graph done...")
+    graph_eq(sigrr, name = "rR")
+    print("sigrr graph done...")
 
-    graph_eq(sigphiphi, name = "phiPhi"); print("sigpp graph done...")
+    graph_eq(sigphiphi, name = "phiPhi")
+    print("sigpp graph done...")
 
-    graph_eq(sigthatha, name = "thetaTheta"); print("sigtt graph done...")
+    graph_eq(sigthatha, name = "thetaTheta")
+    print("sigtt graph done...")
 
-    graph_eq(sigrtha, name = "rTheta"); print("sigrt graph done...")
+    graph_eq(sigrtha, name = "rTheta")
+    print("sigrt graph done...")
 
     # Volumetric Heat Generation Graph
     start = time.time()
@@ -99,7 +103,8 @@ if __name__ == "__main__":
     stop = time.time()
     print(f"q1 calculated in {stop - start:.2f} seconds...")
 
-    graph_eq(q1, "q1"); print("q1 graph done...")
+    graph_eq(q1, "q1")
+    print("q1 graph done...")
 
     # Input for Tempurature Gradient
 
@@ -108,7 +113,7 @@ if __name__ == "__main__":
 
     #Theta increment
     dtha = tha[1]-tha[0]
-    
+
     #r increment
     dr = a
 
@@ -133,8 +138,14 @@ if __name__ == "__main__":
     print(f"temp matrix calculated in {stop - start:.2f} seconds...")
 
     # Graph Temperature Gradient
-
-    graph_temp_gr(T[:,:,(t.size-1)], shift = 21, name = "tempGradient"); print("temp graph done...")
+    graph_temp_gr(T[:,:,(t.size-1)], shift = 21, name = "tempGradient")
+    graph_temp_gr(T[:,:,(t.size-100)], shift = 21, name = "tempGradient1")
+    graph_temp_gr(T[:,:,(t.size-150)], shift = 21, name = "tempGradient2")
+    graph_temp_gr(T[:,:,(t.size-200)], shift = 21, name = "tempGradient3")
+    graph_temp_gr(T[:,:,(t.size-250)], shift = 21, name = "tempGradient4")
+    graph_temp_gr(T[:,:,(t.size-300)], shift = 21, name = "tempGradient5")
+    graph_temp_gr(T[:,:,(t.size-350)], shift = 21, name = "tempGradient6")
+    print("temp graph done...")
 
     end = time.time()
     print(f"program completed in {end - begin:.2f} seconds!")
@@ -146,5 +157,5 @@ if __name__ == "__main__":
     # put_io("outl", "rTheta", "Radial Stress on the Theta Face Image")
     # put_io("outm", "q1", "Volumetric Heat Generation Image")
     # put_io("outn", "T", "Temperature Gradient Image")
-    # 
+    #
     # close_io()

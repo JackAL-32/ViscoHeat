@@ -9,8 +9,8 @@ __plt.jet()
 
 R, theta = __np.meshgrid(r, tha1)
 
-X = R * __np.cos(theta)
-Y = R * __np.sin(theta)
+X = R * __np.cos(theta) * 1000
+Y = R * __np.sin(theta) * 1000
 
 cmap = __plt.get_cmap('jet')
 
@@ -36,7 +36,6 @@ def graph_eq(sig, name = str(time.time())[7:-4], factor = 10e5, dir = "./picture
     else: title = "Stress "
 
     fig.colorbar(sm, ticks=__np.arange(0,vmax,tickstep), boundaries=__np.arange(0,vmax,.001), ax=ax)
-
     __plt.gca().set_aspect("equal")
     __plt.xlabel("z (mm)")
     __plt.ylabel("x (mm)")
@@ -55,7 +54,7 @@ def graph_temp_gr(values, shift = 21, name = str(time.time())[7:-4], dir = "./pi
     sm = cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
     
-    tickstep = .2 # From last year
+    tickstep = 10 # From last year
 
     fig.colorbar(sm, ticks=__np.arange(0,vmax,tickstep), boundaries=__np.arange(0,vmax,.001), ax=ax)
     
