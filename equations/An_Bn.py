@@ -5,7 +5,7 @@ from equations.scipy_funcs import hn, jn
 #Coefficient for the Longitudinal and Shear Wave Potentials respectivly
 #========================================================================================
 
-#A_n and B_n (this is a test comment)
+#A_n and B_n
 def An_Bn(n):
     from equations.parameters import a1, a, B1, P, eta
     if n == 1:
@@ -38,3 +38,22 @@ def An_Bn(n):
         An = x[0][0]
         Bn = x[1][0]
     return An, Bn
+    
+'''
+def An_Bn(n):
+    from equations.parameters import a1, a, B1, P, eta
+    from math import factorial as fact
+    An, Bn = 0, 0
+    if n == 0:
+        An = (-1/3)*(1j)*P*(a1*a)**3
+    elif n == 1:
+        An = (1/3)*P*(1 - 1/eta)*(a1*a)**3
+    elif n > 1:
+        Np = n*(4*n**2 - 1)/(n + (n + 1)*(B1/a1)**2)
+        An = 1j**(n-1)*P*(2**n*fact(n)/fact(2*n))**2 * Np * (a1*a)**(2*n-1)
+    if n > 0:
+        Bn = -(B1/a1)**(n+1)*An/n
+    else:
+        Bn = 0
+    return An, Bn
+'''
