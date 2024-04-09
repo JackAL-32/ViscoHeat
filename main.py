@@ -79,10 +79,10 @@ if __name__ == "__main__":
     for process in processes:
         process.join()
 
-    sigrr = sigmas["get_sigrr"]
-    sigphiphi = sigmas["get_sigphiphi"]
-    sigthatha = sigmas["get_sigthatha"]
-    sigrtha = sigmas["get_sigrtha"]
+    sigrr = 10*sigmas["get_sigrr"]
+    sigphiphi = 10*sigmas["get_sigphiphi"]
+    sigthatha = 10*sigmas["get_sigthatha"]
+    sigrtha = 10*sigmas["get_sigrtha"]
 
     # Stress Graphs
     graph_eq(sigrr, name = "rR")
@@ -139,13 +139,13 @@ if __name__ == "__main__":
 
     # Graph Temperature Gradient
     graph_temp_gr(T[:,:,(t.size-1)], shift = 21, name = "tempGradient")
-    graph_temp_gr(T[:,:,(t.size-100)], shift = 21, name = "tempGradient1")
-    graph_temp_gr(T[:,:,(t.size-150)], shift = 21, name = "tempGradient2")
-    graph_temp_gr(T[:,:,(t.size-200)], shift = 21, name = "tempGradient3")
-    graph_temp_gr(T[:,:,(t.size-250)], shift = 21, name = "tempGradient4")
-    graph_temp_gr(T[:,:,(t.size-300)], shift = 21, name = "tempGradient5")
-    graph_temp_gr(T[:,:,(t.size-350)], shift = 21, name = "tempGradient6")
     print("temp graph done...")
+
+    start = time.time()
+    generate_frames(T)
+    create_video()
+    stop = time.time()
+    print(f"video completed in {stop - start:.2f} seconds!")
 
     end = time.time()
     print(f"program completed in {end - begin:.2f} seconds!")

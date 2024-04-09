@@ -1,14 +1,25 @@
 import numpy as __np
 from equations.parameters import *
 
+# Binder Properties
+k1 = .27 # W/(m*K)
+p1 = 1030 # kg/m**3
+# c1 = k1/(p1*v1) Directly from Mares
+c1 = 2570 # J/(kg * K)
+
+# Crystal Properties
+k2 = .4184 # W/(m*K)
+p2 = 1910 # kg/m**3
+c2 = 1015 # J/(kg * K)
+
 def cot(tha):
     return 1/__np.tan(tha)
 
-def get_dTdt(r, tha, dr, dtha, a_ind, ptsInt, T, q): # Needs to account for differing values of k
+def get_dTdt(r, tha, dr, dtha, a_ind, ptsInt, T, q, k, c, p):
 
     dTdt = __np.zeros((r.size, tha.size))
 
-    # Roll in with the padding, truncate garbage to correct dimensions
+    # Roll in with the padding, truncate to correct dimensions
     Ti1j = __np.roll(T, -1, axis=0)[:-1, 1:-1]
     Tin1j = __np.roll(T, 1, axis=0)[:-1, 1:-1]
     Tij1 = __np.roll(T, -1, axis=1)[:-1, 1:-1]
@@ -20,11 +31,11 @@ def get_dTdt(r, tha, dr, dtha, a_ind, ptsInt, T, q): # Needs to account for diff
 
     # Interior case:
     dTdt[ptsInt] =  (k/(p*c)) * (1/(r**2)) * (
-            (((r/dr) + ((r**2)/dr**2)) * Ti1j)
-        + ((((r**2)/dr**2) - (r/dr)) * Tin1j)
+            (((r/dr) + ((r**2)/(dr**2))) * Ti1j)
+        + ((((r**2)/(dr**2)) - (r/dr)) * Tin1j)
         + (((cot(tha)/(2*dtha)) + (1/(dtha**2))) * Tij1)
         + (((cot(tha)/(2*dtha)) + (1/(dtha**2))) * Tijn1)
-        - ((((2*(r**2))/dr**2) - (2/(dtha**2))) * T[:-1, 1:-1])) + (q/(p*c))
+        - ((((2*(r**2))/(dr**2)) - (2/(dtha**2))) * T[:-1, 1:-1])) + (q/(p*c))
 
     # Boundary cases:
     # tha max: Equation 6
@@ -67,16 +78,26 @@ def get_T(r, tha, time, gamma, dt, dr, dtha, q1):
     extra_points = __np.linspace(step_size, a-step_size, num_additional_points)
     r = __np.concatenate((extra_points, r))
 
+    # Find the last index that is considered particle
+    a_ind = __np.where(r == a)[0][0] # find r = a
+
     # Declare necessary arrays for Ralston's Method
     T = __np.full(shape=(r.size+1, tha.size+2, time.size), fill_value=T0 )
     T34 = __np.zeros((r.size+1, tha.size+2, time.size))
     dTdt = __np.zeros((r.size, tha.size, time.size))
     dTdt34 = __np.zeros((r.size, tha.size, time.size))
 
-    # Tiling r, tha, and k for matix operations
+    # Tiling r, and tha for matix operations
     r_exp = __np.tile(r, (dTdt.shape[1],1)).T # Dupes r vector across columns
     tha_exp = __np.tile(tha, (dTdt.shape[0],1)) # Dupes tha vector across rows
-    k_exp = __np.full(shape=(r.size, tha.size), fill_value=binderk)
+    
+    # Prepare material properties for particle (x2) and medium (x1)
+    k_exp = __np.full((r.size, tha.size), k1)
+    k_exp[:a_ind+1, :] = k2
+    p_exp = __np.full((r.size, tha.size), p1)
+    p_exp[:a_ind+1, :] = p2
+    c_exp = __np.full((r.size, tha.size), c1)
+    c_exp[:a_ind+1, :] = c2
 
     # Mask the internal points
     ptsInt = __np.full(shape=(r.size, tha.size), fill_value=True)
@@ -84,9 +105,7 @@ def get_T(r, tha, time, gamma, dt, dr, dtha, q1):
     ptsInt[:, 0] = False  # tha min WRONG - depends how we handle the 2 pts that are both boundaries
     # r max should be treated as internal as long as we pad with Tinf
     ptsInt[0, :] = False  # r min
-    a_ind = __np.where(r == a)[0][0] # find r = a
     ptsInt[a_ind, :] = False # r = a
-
 
     # Handle strangeness with the q matrix
     q = __np.transpose(q1[:-1,:])
@@ -103,7 +122,7 @@ def get_T(r, tha, time, gamma, dt, dr, dtha, q1):
         T[-1,:,t] = 21
 
         # Calculate dTdt
-        dTdt[:,:,t] = get_dTdt(r_exp, tha_exp, dr, dtha, a_ind, ptsInt, T[:,:,t], q)
+        dTdt[:,:,t] = get_dTdt(r_exp, tha_exp, dr, dtha, a_ind, ptsInt, T[:,:,t], q, k_exp, c_exp, p_exp)
 
         # Estimate T34, include padding
         T34[:-1, 1:-1,t] = T[:-1, 1:-1,t] + dTdt * dt * (3/4)
@@ -111,7 +130,7 @@ def get_T(r, tha, time, gamma, dt, dr, dtha, q1):
         T34[:,-1,t] = T34[:,-2,t]
 
         # Calculate dTdt34
-        dTdt34[:,:,t] = get_dTdt(r_exp, tha_exp, dr, dtha, a_ind, ptsInt, T34[:,:,t], q)
+        dTdt34[:,:,t] = get_dTdt(r_exp, tha_exp, dr, dtha, a_ind, ptsInt, T34[:,:,t], q, k_exp, c_exp, p_exp)
 
         # Ralston's method to estimate T at next timestep
         T[:-1, 1:-1,t+1] = T[:-1, 1:-1,t] + (dt/3) * (dTdt + (2*dTdt34))
