@@ -1,23 +1,17 @@
 import numpy as __np
 from equations.parameters import *
 
-# Binder Properties
-k1 = .27 # W/(m*K)
-p1 = 1030 # kg/m**3
-# c1 = k1/(p1*v1) Directly from Mares
-c1 = 2570 # J/(kg * K)
-
-# Crystal Properties
-k2 = .4184 # W/(m*K)
-p2 = 1910 # kg/m**3
-c2 = 1015 # J/(kg * K)
-
 def cot(tha):
     return 1/__np.tan(tha)
 
-def get_dTdt(r, tha, dr, dtha, a_ind, ptsInt, T, q, k, c, p):
+def calculate_average_per_timestep(T):
+    # Calculate the average value for each timestep along the last axis (axis=-1)
+    average_per_timestep = __np.mean(T, axis=(0,1))
+    return average_per_timestep
 
-    dTdt = __np.zeros((r.size, tha.size))
+def get_dTdt(r, tha, dr, dtha, a, ptsInt, T, q, k, c, p):
+
+    dTdt = __np.zeros(r.shape)
 
     # Roll in with the padding, truncate to correct dimensions
     Ti1j = __np.roll(T, -1, axis=0)[:-1, 1:-1]
@@ -30,37 +24,39 @@ def get_dTdt(r, tha, dr, dtha, a_ind, ptsInt, T, q, k, c, p):
     Tij3 = __np.roll(T, -3, axis=1)[:-1, 1:-1]
 
     # Interior case:
-    dTdt[ptsInt] =  (k/(p*c)) * (1/(r**2)) * (
-            (((r/dr) + ((r**2)/(dr**2))) * Ti1j)
-        + ((((r**2)/(dr**2)) - (r/dr)) * Tin1j)
-        + (((cot(tha)/(2*dtha)) + (1/(dtha**2))) * Tij1)
-        + (((cot(tha)/(2*dtha)) + (1/(dtha**2))) * Tijn1)
-        - ((((2*(r**2))/(dr**2)) - (2/(dtha**2))) * T[:-1, 1:-1])) + (q/(p*c))
+    dTdt[ptsInt] =  (k[ptsInt]/(p[ptsInt]*c[ptsInt])) * (1/(r[ptsInt]**2)) * (
+            (((r[ptsInt]/dr) + ((r[ptsInt]**2)/(dr**2))) * Ti1j[ptsInt])
+        + ((((r[ptsInt]**2)/(dr**2)) - (r[ptsInt]/dr)) * Tin1j[ptsInt])
+        + (((cot(tha[ptsInt])/(2*dtha)) + (1/(dtha**2))) * Tij1[ptsInt])
+        + (((cot(tha[ptsInt])/(2*dtha)) + (1/(dtha**2))) * Tijn1[ptsInt])
+        - ((((2*(r[ptsInt]**2))/(dr**2)) - (2/(dtha**2))) * T[:-1, 1:-1][ptsInt])) + (q[ptsInt]/(p[ptsInt]*c[ptsInt]))
 
     # Boundary cases:
     # tha max: Equation 6
-    dTdt[:, -1] = (k/(p*c)) * (1/(r**2)) * (
-            ((((-2*(r**2))/(dr**2)) + (cot(tha)/(2*dtha)) - (1/(dtha**2))) * T[:-1, 1:-1]) 
-        + (((r/dr) + (r**2/(dr**2))) * Ti1j)
-        + (((r**2/(dr**2)) - (r/dr)) * Tin1j)
-        + (((1/(dtha**2)) - (cot(tha)/(2*dtha))) * Tijn1)) + (q/(p*c))
+    dTdt[:, -1] = (k[:,-1]/(p[:,-1]*c[:,-1])) * (1/(r[:,-1]**2)) * (
+            ((((-2*(r[:,-1]**2))/(dr**2)) + (cot(tha[:,-1])/(2*dtha)) - (1/(dtha**2))) * T[:-1,1:-1][:,-1]) 
+        + (((r[:,-1]/dr) + (r[:,-1]**2/(dr**2))) * Ti1j[:,-1])
+        + (((r[:,-1]**2/(dr**2)) - (r[:,-1]/dr)) * Tin1j[:,-1])
+        + (((1/(dtha**2)) - (cot(tha[:,-1])/(2*dtha))) * Tijn1[:,-1])) + (q[:,-1]/(p[:,-1]*c[:,-1]))
 
     # tha min: Equation 5
-    dTdt[:, 0] = (k/(p*c)) * (1/(r**2)) * (
-        - ((((2*r**2)/(dr**2)) + (cot(tha)/(2*dtha)) + (1/(dtha**2))) * T[:-1, 1:-1])
-        + (((r/dr) + (r**2/(dr**2))) * Ti1j)
-        + (((r**2/(dr**2)) - (r/dr)) * Tin1j)
-        + (((cot(tha)/(2*dtha)) + (1/(dtha**2))) * Tij1)) + (q/(p*c))
+    dTdt[:, 0] = (k[:,0]/(p[:,0]*c[:,0])) * (1/(r[:,0]**2)) * (
+        - ((((2*r[:,0]**2)/(dr**2)) + (cot(tha[:,0])/(2*dtha)) + (1/(dtha**2))) * T[:-1,1:-1][:,0])
+        + (((r[:,0]/dr) + (r[:,0]**2/(dr**2))) * Ti1j[:,0])
+        + (((r[:,0]**2/(dr**2)) - (r[:,0]/dr)) * Tin1j[:,0])
+        + (((cot(tha[:,0])/(2*dtha)) + (1/(dtha**2))) * Tij1[:,0])) + (q[:,0]/(p[:,0]*c[:,0]))
 
     # r a: Equation 3 right
-    dTdt[a_ind, :] = (k/(p*c)) * (1/(r**2)) * (
-            ((((-3*r)/dr) + ((2*r)/(dr**2)) - ((3*cot(tha))/(2*dtha)) + (2/(dtha**2))) * T[:-1, 1:-1])
-        + ((((4*r)/dr) - ((5*r**2)/(dr**2))) * Ti1j)
-        + ((((4*r**2)/(dr**2)) - (r/dr)) * Ti2j)
-        - (((r**2)/(dr**2)) * Ti3j)
-        + ((((2*cot(tha))/dtha) - (5/(dtha**2))) * Tij1)
-        + (((4/(dtha**2)) - (cot(tha)/(2*dtha))) * Tij2)
-        - ((1/(dtha**2)) * Tij3)) + (q/(p*c))
+    dTdt[a, :] = (k[a,:]/(p[a,:]*c[a,:])) * (1/(r[a,:]**2)) * (
+            ((((-3*r[a,:])/dr) + ((2*r[a,:])/(dr**2)) - ((3*cot(tha[a,:]))/(2*dtha)) + (2/(dtha**2))) * T[:-1, 1:-1][a,:])
+        + ((((4*r[a,:])/dr) - ((5*r[a,:]**2)/(dr**2))) * Ti1j[a,:])
+        + ((((4*r[a,:]**2)/(dr**2)) - (r[a,:]/dr)) * Ti2j[a,:])
+        - (((r[a,:]**2)/(dr**2)) * Ti3j[a,:])
+        + ((((2*cot(tha[a,:]))/dtha) - (5/(dtha**2))) * Tij1[a,:])
+        + (((4/(dtha**2)) - (cot(tha[a,:])/(2*dtha))) * Tij2[a,:])
+        - ((1/(dtha**2)) * Tij3[a,:])) + (q[a, :]/(p[a, :]*c[a,:]))
+    
+    # r a and tha min: 
 
     # r max: Should be handled as an internal point with Tinf padding
     
@@ -69,7 +65,18 @@ def get_dTdt(r, tha, dr, dtha, a_ind, ptsInt, T, q, k, c, p):
 
     return dTdt
 
-def get_T(r, tha, time, gamma, dt, dr, dtha, q1):
+def get_T(r, tha, time, dr, dtha, dt, q1):
+
+    # Binder Properties
+    k1 = .27 # W/(m*K)
+    p1 = 1030 # kg/m**3
+    # c1 = k1/(p1*v1) Directly from Mares
+    c1 = 2570 # J/(kg * K)
+
+    # Crystal Properties
+    k2 = .4184 # W/(m*K)
+    p2 = 1910 # kg/m**3
+    c2 = 1015 # J/(kg * K)
 
     # Append points to r
     # Need to be careful with input sanitization to get exactly step_size and exactly a in the linspace
@@ -125,7 +132,7 @@ def get_T(r, tha, time, gamma, dt, dr, dtha, q1):
         dTdt[:,:,t] = get_dTdt(r_exp, tha_exp, dr, dtha, a_ind, ptsInt, T[:,:,t], q, k_exp, c_exp, p_exp)
 
         # Estimate T34, include padding
-        T34[:-1, 1:-1,t] = T[:-1, 1:-1,t] + dTdt * dt * (3/4)
+        T34[:-1, 1:-1,t] = T[:-1, 1:-1,t] + dTdt[:, :, t] * dt * (3/4)
         T34[:,0,t] = T34[:,1,t]
         T34[:,-1,t] = T34[:,-2,t]
 
@@ -133,7 +140,7 @@ def get_T(r, tha, time, gamma, dt, dr, dtha, q1):
         dTdt34[:,:,t] = get_dTdt(r_exp, tha_exp, dr, dtha, a_ind, ptsInt, T34[:,:,t], q, k_exp, c_exp, p_exp)
 
         # Ralston's method to estimate T at next timestep
-        T[:-1, 1:-1,t+1] = T[:-1, 1:-1,t] + (dt/3) * (dTdt + (2*dTdt34))
+        T[:-1, 1:-1,t+1] = T[:-1, 1:-1,t] + (dt/3) * (dTdt[:, :, t] + (2*dTdt34[:, :, t]))
 
     # Strip the padding
     T = T[:-1, 1:-1,:]
@@ -141,4 +148,21 @@ def get_T(r, tha, time, gamma, dt, dr, dtha, q1):
     # Mirror the values over tha = 0
     T = __np.concatenate((__np.flip(T[1:, :], axis=0), T), axis=0) # Probably need to dupe first and last cols before mirror
 
-    return T
+    print(T[:,:,2])
+    print(T[:,:,100])
+    print(T[:,:,150])
+    print(T[:,:,200])
+    print(T[:,:,250])
+    print(T[:,:,-1])
+    print(T.shape)
+    print(__np.amax(T))
+
+    # Example usage:
+    # Assuming T is your temperature array with shape (num_r_points, num_tha_points, num_time_steps)
+    avg_per_timestep = calculate_average_per_timestep(T)
+
+    # Print the average temperature for each timestep
+    for i, avg_temp in enumerate(avg_per_timestep):
+        print(f"Average temperature at timestep {i}: {avg_temp}")
+
+    return T, r, tha

@@ -56,15 +56,16 @@ from equations.scipy_funcs import *
 from equations.stress import *
 from equations.graph import * #Need to fix this
 from equations.temperature import *
+from equations.time_integrator import *
 import multiprocessing
 import time
-
-begin = time.time()
 
 def worker(func, result_dict):
     result_dict[func.__name__] = func()
 
 if __name__ == "__main__":
+    begin = time.time()
+
     manager = multiprocessing.Manager()
     sigmas = manager.dict()
 
@@ -125,6 +126,7 @@ if __name__ == "__main__":
 
     # Temperature Gradient
     start = time.time()
+    '''
     #Iteration Matrices
     Hmat = H(r,tha,gamma,dt,dr,dtha)
     Hbmat = Hb(r,tha,gamma,dt,dr,dtha) # Should go away
@@ -134,16 +136,18 @@ if __name__ == "__main__":
 
     #Filling in Gap
     T = FillGap(T1,r,tha1,t)
+    '''
+    T, rT, thaT = get_T(r, tha, t, dr, dtha, dt, q1)
+
     stop = time.time()
     print(f"temp matrix calculated in {stop - start:.2f} seconds...")
 
     # Graph Temperature Gradient
-    graph_temp_gr(T[:,:,(t.size-1)], shift = 21, name = "tempGradient")
+    graph_temp_gr(T[:,:,(t.size-1)], rT, thaT, shift = 21, name = "tempGradient")
     print("temp graph done...")
 
     start = time.time()
-    generate_frames(T)
-    create_video()
+    create_video(T, dt)
     stop = time.time()
     print(f"video completed in {stop - start:.2f} seconds!")
 
