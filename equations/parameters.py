@@ -21,8 +21,8 @@ def __set_variables():
     eta = p/p2
 
     #Tangents
-    tan1 = X1*v1*100/(__np.pi*8.686*10**6)
-    tan2 = X2*v2*100/(__np.pi*8.686*10**6)
+    tan1 = X1*v1/(__np.pi*8.686*10**6)
+    tan2 = X2*v2/(__np.pi*8.686*10**6)
 
     #mus
     u_e = v2**2*p
