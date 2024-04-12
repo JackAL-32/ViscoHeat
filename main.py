@@ -26,7 +26,7 @@ f = 500000
 N = 30
 
 v1 = 1100
-X1 = 0.024
+X1 = 240 #Fixed a unit conversion issue, we think.
 v2 = 570
 p = 1030
 p2 = 1910
