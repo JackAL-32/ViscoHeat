@@ -21,9 +21,6 @@ def Pn_cos(tha,n):
     return val
 
 
-#First derivative of Legendre Poly. 
-def dPndTheta_1(n,tha):
-    #When n = 0 derivative formula would be undefined (solved by hand)
 #Finding the Legendre Polynomial in terms of cos(theta)
 def Pn_cos(tha,n):
     x = __np.cos(tha)
