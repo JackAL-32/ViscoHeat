@@ -16,19 +16,20 @@ def get_q1(sigrr, sigphiphi, sigthatha, sigrtha):
     drtha = (angle(E1)) - (angle(1 + nu1))
     
     # This is the equation for Xi R R
-    xirr = (__np.sin(drr)) * (abs(sigrr)) * (abs((sigrr) - ((nu1) * ((sigthatha) + (sigphiphi)))))
-    
-    # This is the equation for Xi theta theta
+    xirr =     (__np.sin(drr))     * (abs(sigrr))     * (abs((sigrr)     - ((nu1) * ((sigthatha) + (sigphiphi)))))
     xithatha = (__np.sin(dthatha)) * (abs(sigthatha)) * (abs((sigthatha) - ((nu1) * ((sigrr) + (sigphiphi)))))
-    
-    # This is the equation for Xi phi phi
     xiphiphi = (__np.sin(dphiphi)) * (abs(sigphiphi)) * (abs((sigphiphi) - ((nu1) * ((sigrr) + (sigthatha)))))
-    
-    # This is the equation for Xi R theta
-    xirtha = (__np.sin(drtha)) * (abs(1 + nu1)) * ((abs(sigrtha)) * (abs(sigrtha)))
+    xirtha =   (__np.sin(drtha))   * (abs(1 + nu1))   * ((abs(sigrtha)) * (abs(sigrtha)))
     
     # This is the equation for q1
     q1 = ((w)/(2 * (abs(E1)))) * (xirr + xithatha + xiphiphi + xirtha)
+    
+    print('q1 max = ')
+    print({__np.amax(q1)})
+    print('q1 min = ')
+    print(__np.amin(q1))
+    print('q1 avg = ')
+    print(__np.average(q1))
 
     return q1
 

@@ -26,7 +26,7 @@ f = 500000
 N = 30
 
 v1 = 1100
-X1 = 0.024
+X1 = 240 #0.024
 v2 = 570
 p = 1030
 p2 = 1910
@@ -65,7 +65,8 @@ def worker(func, result_dict):
 
 if __name__ == "__main__":
     begin = time.time()
-
+    
+    #'''
     manager = multiprocessing.Manager()
     sigmas = manager.dict()
 
@@ -80,10 +81,23 @@ if __name__ == "__main__":
     for process in processes:
         process.join()
 
-    sigrr = 10*sigmas["get_sigrr"]
-    sigphiphi = 10*sigmas["get_sigphiphi"]
-    sigthatha = 10*sigmas["get_sigthatha"]
-    sigrtha = 10*sigmas["get_sigrtha"]
+    sigrr = sigmas["get_sigrr"]
+    sigphiphi = sigmas["get_sigphiphi"]
+    sigthatha = sigmas["get_sigthatha"]
+    sigrtha = sigmas["get_sigrtha"]
+
+    np.save("sigrr.npy", sigrr)
+    np.save("sigphiphi.npy", sigphiphi)
+    np.save("sigrtha.npy", sigrtha)
+    np.save("sigthatha.npy", sigthatha)
+    #'''
+
+    #'''
+    sigrr = np.load('sigrr.npy')
+    sigphiphi = np.load('sigphiphi.npy')
+    sigrtha = np.load('sigrtha.npy')
+    sigthatha = np.load('sigthatha.npy')
+    #'''
 
     # Stress Graphs
     graph_eq(sigrr, name = "rR")
@@ -100,7 +114,7 @@ if __name__ == "__main__":
 
     # Volumetric Heat Generation Graph
     start = time.time()
-    q1 = get_q1(sigrr, sigphiphi, sigthatha, sigrtha)
+    q1 = get_q1(sigrr, sigphiphi, sigthatha, sigrtha) / 100
     stop = time.time()
     print(f"q1 calculated in {stop - start:.2f} seconds...")
 
@@ -120,6 +134,8 @@ if __name__ == "__main__":
 
     #t array and increment
     dt = 0.01*(dr**2/gamma * 0.2)
+    print('dt = ')
+    print(dt)
     t = np.arange(0,0.5,dt)
 
     q1 = dt*(gamma/k1)*q1

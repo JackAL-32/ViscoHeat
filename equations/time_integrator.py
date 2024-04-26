@@ -38,17 +38,17 @@ def get_dTdt(r, tha, dr, dtha, a, ptsInt, T, q, k, c, p):
         + (((r[:,-1]/dr) + (r[:,-1]**2/(dr**2))) * Ti1j[:,-1])
         + (((r[:,-1]**2/(dr**2)) - (r[:,-1]/dr)) * Tin1j[:,-1])
         + (((1/(dtha**2)) - (cot(tha[:,-1])/(2*dtha))) * Tijn1[:,-1])) + (q[:,-1]/(p[:,-1]*c[:,-1]))
-
+        
     # tha min: Equation 5
     dTdt[:, 0] = (k[:,0]/(p[:,0]*c[:,0])) * (1/(r[:,0]**2)) * (
         - ((((2*r[:,0]**2)/(dr**2)) + (cot(tha[:,0])/(2*dtha)) + (1/(dtha**2))) * T[:-1,1:-1][:,0])
         + (((r[:,0]/dr) + (r[:,0]**2/(dr**2))) * Ti1j[:,0])
         + (((r[:,0]**2/(dr**2)) - (r[:,0]/dr)) * Tin1j[:,0])
         + (((cot(tha[:,0])/(2*dtha)) + (1/(dtha**2))) * Tij1[:,0])) + (q[:,0]/(p[:,0]*c[:,0]))
-
+    
     # r a: Equation 3 right
     dTdt[a, :] = (k[a,:]/(p[a,:]*c[a,:])) * (1/(r[a,:]**2)) * (
-            ((((-3*r[a,:])/dr) + ((2*r[a,:])/(dr**2)) - ((3*cot(tha[a,:]))/(2*dtha)) + (2/(dtha**2))) * T[:-1, 1:-1][a,:])
+            ((((-3*r[a,:])/dr) + ((2*(r[a,:]**2))/(dr**2)) - ((3*cot(tha[a,:]))/(2*dtha)) + (2/(dtha**2))) * T[:-1, 1:-1][a,:])
         + ((((4*r[a,:])/dr) - ((5*r[a,:]**2)/(dr**2))) * Ti1j[a,:])
         + ((((4*r[a,:]**2)/(dr**2)) - (r[a,:]/dr)) * Ti2j[a,:])
         - (((r[a,:]**2)/(dr**2)) * Ti3j[a,:])
@@ -56,6 +56,13 @@ def get_dTdt(r, tha, dr, dtha, a, ptsInt, T, q, k, c, p):
         + (((4/(dtha**2)) - (cot(tha[a,:])/(2*dtha))) * Tij2[a,:])
         - ((1/(dtha**2)) * Tij3[a,:])) + (q[a, :]/(p[a, :]*c[a,:]))
     
+    print('dTdt[ptsInt] max = ')
+    print({__np.amax(dTdt[a, :])})
+    print('dTdt[ptsInt] min = ')
+    print(__np.amin(dTdt[a, :]))
+    print('dTdt[ptsInt] avg = ')
+    print(__np.average(dTdt[a, :]))
+
     # r a and tha min: 
 
     # r max: Should be handled as an internal point with Tinf padding
@@ -84,6 +91,8 @@ def get_T(r, tha, time, dr, dtha, dt, q1):
     num_additional_points = int(a/step_size)
     extra_points = __np.linspace(step_size, a-step_size, num_additional_points)
     r = __np.concatenate((extra_points, r))
+    print('r = ')
+    print(r)
 
     # Find the last index that is considered particle
     a_ind = __np.where(r == a)[0][0] # find r = a
@@ -119,7 +128,7 @@ def get_T(r, tha, time, dr, dtha, dt, q1):
     extra_points = __np.zeros((num_additional_points, tha.size))
     q = __np.concatenate((extra_points, q))
 
-    for t in range(0, time.size-1):
+    for t in range(0, 2): #time.size-1):
 
         # Pad with reflection of itself at tha = pi,0 boundaries
         T[:,0,t] = T[:,1,t]

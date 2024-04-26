@@ -21,27 +21,32 @@ def __set_variables():
     eta = p/p2
 
     #Tangents
-    tan1 = X1*v1*100/(__np.pi*8.686*10**6)
-    tan2 = X2*v2*100/(__np.pi*8.686*10**6)
+    tan1 = X1*v1/(__np.pi*8.686e6)
+    tan2 = X2*v2/(__np.pi*8.686e6)
 
     #mus
     u_e = v2**2*p
     u_v = u_e*tan2
     global u1
     u1 = u_e + u_v* 1j
+    print(f"mu = {u1}")
 
     #omega: angular frequency
     global w
     w = 2*__np.pi*f
+    print(f"w = {w}")
 
     #lambdas
     x_e = v1**2*p-2*u_e
     x_v = x_e * tan1
     x = x_e + x_v * 1j
+    print(f"lambda v = {x_v}")
+    print(f"lambda e = {x_e}")
 
     #
     global E1
     E1 = (u1*(3*x + 2*u1))/(x + u1)
+    print(f"E = {E1}")
 
     #
     global nu1

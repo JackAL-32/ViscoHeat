@@ -16,19 +16,20 @@ Y = R * __np.sin(theta) * 1000
 
 cmap = __plt.get_cmap('jet')
 
-def graph_eq(sig, name=str(time.time())[7:-4], factor=10e6, dir="./pictures/"):
+def graph_eq(sig, name=str(time.time())[7:-4], factor=1e9, dir="./pictures/"):
     fig, ax = __plt.subplots()
     values = __np.abs(sig)
     ax.contourf(X, Y, values, 256)
 
-    vmax = __np.ceil(__np.amax(values) / factor)
+    vmax = __np.amax(values) / factor
     vmin = 0
 
-    norm = Normalize(vmin=vmin, vmax=vmax)
+    norm = Normalize(vmin=vmin, vmax=__np.amax(values) / factor)
     sm = cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
 
     tickstep = vmax / 4  # Calculate step for 5 ticks starting from 0
+    print (tickstep)
 
     fig.colorbar(sm, ticks=__np.arange(0, vmax + tickstep, tickstep), ax=ax)
     __plt.gca().set_aspect("equal")
